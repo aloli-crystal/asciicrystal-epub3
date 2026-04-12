@@ -1,0 +1,14 @@
+/docs/
+/lib/
+/bin/
+/.shards/
+*.dwarf
+/shard.lock
+
+# Test output
+/spec/output/
+
+# Temporary files
+*.tmp
+*.bak
+*~

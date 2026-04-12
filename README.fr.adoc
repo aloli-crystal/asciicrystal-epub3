@@ -1,0 +1,139 @@
+= crystal-asciidoctor-epub
+:toc: left
+:toclevels: 2
+
+Convertisseur AsciiDoc vers EPUB3 pour Crystal, équivalent de la gem Ruby https://github.com/asciidoctor/asciidoctor-epub3[asciidoctor-epub3].
+
+link:README.adoc[English version]
+
+== Fonctionnalités
+
+* Conversion de documents AsciiDoc en fichiers EPUB3 valides
+* Sections, paragraphes, listes (ordonnées/non ordonnées), tableaux
+* Blocs de code, admonitions, citations, vers, sidebars
+* Images, sauts thématiques
+* Table des matières (NCX + EPUB3 NAV)
+* Métadonnées : titre, auteur, langue, description, éditeur
+* Image de couverture
+* Feuille de style par défaut incluse
+* **API bibliothèque** pour utilisation dans des applications web
+* **CLI** pour utilisation en ligne de commande
+
+== Installation
+
+=== En tant que bibliothèque
+
+Ajouter dans votre `shard.yml` :
+
+[source,yaml]
+----
+dependencies:
+  crystal-asciidoctor-epub:
+    github: aloli-crystal/crystal-asciidoctor-epub
+    version: "~> 0.1"
+----
+
+Puis exécuter `shards install`.
+
+=== Binaire CLI
+
+[source,bash]
+----
+git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub.git
+cd crystal-asciidoctor-epub
+shards build --release
+sudo cp bin/crystal-asciidoctor-epub /usr/local/bin/
+----
+
+== Utilisation
+
+=== API bibliothèque
+
+[source,crystal]
+----
+require "asciidoctor_epub"
+
+input = <<-ADOC
+= Mon Livre
+Nom Auteur
+:lang: fr
+
+== Chapitre 1
+
+Ceci est le premier chapitre avec du *gras* et de l'_italique_.
+
+== Chapitre 2
+
+Un exemple de code :
+
+[source,crystal]
+\----
+puts "Bonjour !"
+\----
+ADOC
+
+doc = Asciidoctor.load(input)
+
+# Obtenir l'EPUB en bytes (pour applications web)
+bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+# Ou écrire directement dans un fichier
+AsciidoctorEpub::Converter.new.convert_to_file(doc, "mon-livre.epub")
+----
+
+=== Dans une application web Kemal
+
+[source,crystal]
+----
+require "kemal"
+require "asciidoctor_epub"
+
+post "/generer-epub" do |env|
+  contenu = env.params.body["content"]
+  doc = Asciidoctor.load(contenu)
+  epub_bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+  env.response.content_type = "application/epub+zip"
+  env.response.headers["Content-Disposition"] = "attachment; filename=document.epub"
+  env.response.write(epub_bytes)
+end
+
+Kemal.run
+----
+
+=== Ligne de commande
+
+[source,bash]
+----
+crystal-asciidoctor-epub document.adoc
+# => Génère document.epub
+----
+
+Options :
+
+[cols="1,3"]
+|===
+| Option | Description
+
+| `-o FILE`, `--out-file FILE`
+| Fichier EPUB de sortie (par défaut : `<fichier>.epub`)
+
+| `-v`, `--version`
+| Afficher la version
+
+| `-h`, `--help`
+| Afficher l'aide
+|===
+
+== Tests
+
+[source,bash]
+----
+crystal spec
+----
+
+17 exemples couvrant tous les modules.
+
+== Licence
+
+MIT
