@@ -4,13 +4,27 @@ require "option_parser"
 
 input_file = ""
 output_file = ""
+sample_mode = false
 
 OptionParser.parse do |parser|
   parser.banner = "Usage: crystal-asciidoctor-epub3 [options] fichier.adoc"
   parser.on("-o FILE", "--out-file FILE", "Output EPUB file (default: <input>.adoc.epub)") { |f| output_file = f }
+  parser.on("--sample", "Generate reference document (reference.adoc + EPUB)") { sample_mode = true }
   parser.on("-h", "--help", "Show help") { puts parser; exit 0 }
   parser.on("-v", "--version", "Show version") { puts "crystal-asciidoctor-epub3 #{AsciidoctorEpub::VERSION}"; exit 0 }
   parser.unknown_args { |args| input_file = args.first? || "" }
+end
+
+if sample_mode
+  sample_src = File.join(__DIR__, "..", "data", "samples", "reference.adoc")
+  sample_dest = File.join(Dir.current, "reference.adoc")
+  sample_epub = File.join(Dir.current, "reference.adoc.epub")
+  File.write(sample_dest, File.read(sample_src))
+  doc = Asciidoctor.load_file(sample_dest, {"safe" => "safe"})
+  converter = AsciidoctorEpub::Converter.new
+  converter.convert_to_file(doc, sample_epub)
+  puts "Sample document generated: reference.adoc and reference.adoc.epub"
+  exit 0
 end
 
 if input_file.empty?
