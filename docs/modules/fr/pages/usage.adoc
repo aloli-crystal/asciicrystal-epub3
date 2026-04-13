@@ -1,0 +1,78 @@
+= Utilisation
+
+== API Bibliotheque
+
+[source,crystal]
+----
+require "asciidoctor_epub"
+
+input = <<-ADOC
+= Mon Livre
+Nom Auteur
+:lang: fr
+
+== Chapitre 1
+
+Ceci est le premier chapitre avec du *gras* et de l'_italique_.
+
+== Chapitre 2
+
+Un exemple de code :
+
+[source,crystal]
+\----
+puts "Bonjour !"
+\----
+ADOC
+
+doc = Asciidoctor.load(input)
+bytes = AsciidoctorEpub::Converter.new.convert(doc)
+AsciidoctorEpub::Converter.new.convert_to_file(doc, "mon-livre.epub")
+----
+
+== Dans une Application Web Kemal
+
+[source,crystal]
+----
+require "kemal"
+require "asciidoctor_epub"
+
+post "/generer-epub" do |env|
+  contenu = env.params.body["content"]
+  doc = Asciidoctor.load(contenu)
+  epub_bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+  env.response.content_type = "application/epub+zip"
+  env.response.headers["Content-Disposition"] = "attachment; filename=document.epub"
+  env.response.write(epub_bytes)
+end
+
+Kemal.run
+----
+
+== Ligne de Commande
+
+[source,bash]
+----
+crystal-asciidoctor-epub3 document.adoc
+# => Genere document.epub
+----
+
+=== Options
+
+[cols="1,3"]
+|===
+| Option | Description
+
+| `-o FILE`, `--out-file FILE`
+| Fichier EPUB de sortie
+
+| `--sample`
+| Generer le document de reference
+
+| `-v`, `--version`
+| Afficher la version
+
+| `-h`, `--help`
+| Afficher l'aide
+|===

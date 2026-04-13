@@ -1,0 +1,25 @@
+= Installation
+
+== En tant que Bibliotheque
+
+Ajouter dans votre `shard.yml` :
+
+[source,yaml]
+----
+dependencies:
+  crystal-asciidoctor-epub3:
+    github: aloli-crystal/crystal-asciidoctor-epub3
+    version: "~> 2.3"
+----
+
+Puis executer `shards install`.
+
+== Binaire CLI
+
+[source,bash]
+----
+git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
+cd crystal-asciidoctor-epub3
+shards build --release
+sudo cp bin/crystal-asciidoctor-epub3 /usr/local/bin/
+----

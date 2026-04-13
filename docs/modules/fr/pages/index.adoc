@@ -1,0 +1,25 @@
+= Crystal Asciidoctor EPUB3
+
+Convertisseur AsciiDoc vers EPUB3 pour Crystal, equivalent de la gem Ruby https://github.com/asciidoctor/asciidoctor-epub3[asciidoctor-epub3].
+
+== Fonctionnalites
+
+* Conversion de documents AsciiDoc en fichiers EPUB3 valides
+* Sections, paragraphes, listes, tableaux
+* Blocs de code avec coloration syntaxique (via crystal-rouge), admonitions, citations, vers, sidebars
+* Images embarquees dans le ZIP EPUB
+* Page de couverture depuis l'attribut `:front-cover-image:`
+* Notes de bas de page avec liens retour
+* Table des matieres hierarchique (NCX + EPUB3 NAV)
+* Metadonnees : titre, auteur, langue, description, editeur
+* Feuille de style par defaut incluse
+* *API bibliotheque* pour utilisation dans des applications web
+* *CLI* pour utilisation en ligne de commande
+
+== Versions
+
+Porte depuis Ruby asciidoctor-epub3 *2.3.0* (31/08/2025).
+
+== Licence
+
+MIT

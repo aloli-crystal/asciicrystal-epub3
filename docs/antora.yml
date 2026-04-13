@@ -1,0 +1,6 @@
+name: crystal-asciidoctor-epub3
+title: 'Crystal Asciidoctor EPUB3'
+version: '2.3.0'
+nav:
+  - modules/ROOT/nav.adoc
+  - modules/fr/nav.adoc
