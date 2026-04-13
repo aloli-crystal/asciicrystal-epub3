@@ -77,3 +77,66 @@ aside {
   background: #f9f9f9;
   border: 1px solid #e0e0e0;
 }
+
+/* Syntax highlighting — Rouge GitHub theme */
+pre.highlight { background: #fff; color: #1f2328; }
+pre.highlight .c  { color: #57606a; }
+pre.highlight .c1 { color: #57606a; }
+pre.highlight .cd { color: #57606a; }
+pre.highlight .cm { color: #57606a; }
+pre.highlight .cp { color: #cf222e; font-weight: bold; }
+pre.highlight .cs { color: #57606a; font-weight: bold; font-style: italic; }
+pre.highlight .err { color: #cf222e; }
+pre.highlight .k  { color: #cf222e; }
+pre.highlight .kc { color: #0550ae; }
+pre.highlight .kd { color: #cf222e; }
+pre.highlight .kn { color: #cf222e; }
+pre.highlight .kp { color: #cf222e; }
+pre.highlight .kr { color: #cf222e; }
+pre.highlight .kt { color: #953800; }
+pre.highlight .n  { color: #1f2328; }
+pre.highlight .na { color: #116329; }
+pre.highlight .nb { color: #953800; }
+pre.highlight .nc { color: #953800; font-weight: bold; }
+pre.highlight .nd { color: #8250df; }
+pre.highlight .ne { color: #953800; }
+pre.highlight .nf { color: #8250df; }
+pre.highlight .nl { color: #0550ae; }
+pre.highlight .nn { color: #953800; }
+pre.highlight .no { color: #0550ae; }
+pre.highlight .nt { color: #116329; }
+pre.highlight .nv { color: #0550ae; }
+pre.highlight .o  { color: #0550ae; }
+pre.highlight .ow { color: #cf222e; font-weight: bold; }
+pre.highlight .p  { color: #1f2328; }
+pre.highlight .s  { color: #0a3069; }
+pre.highlight .s1 { color: #0a3069; }
+pre.highlight .s2 { color: #0a3069; }
+pre.highlight .sa { color: #0a3069; }
+pre.highlight .sb { color: #0a3069; }
+pre.highlight .sc { color: #0a3069; }
+pre.highlight .sd { color: #0a3069; }
+pre.highlight .se { color: #cf222e; }
+pre.highlight .sh { color: #0a3069; }
+pre.highlight .si { color: #0a3069; }
+pre.highlight .sr { color: #116329; }
+pre.highlight .ss { color: #0550ae; }
+pre.highlight .sx { color: #0a3069; }
+pre.highlight .m  { color: #0550ae; }
+pre.highlight .mb { color: #0550ae; }
+pre.highlight .mf { color: #0550ae; }
+pre.highlight .mh { color: #0550ae; }
+pre.highlight .mi { color: #0550ae; }
+pre.highlight .mo { color: #0550ae; }
+pre.highlight .l  { color: #0550ae; }
+pre.highlight .ld { color: #0550ae; }
+pre.highlight .gd { color: #cf222e; background: #ffebe9; }
+pre.highlight .ge { font-style: italic; }
+pre.highlight .gh { color: #0550ae; font-weight: bold; }
+pre.highlight .gi { color: #116329; background: #dafbe1; }
+pre.highlight .go { color: #57606a; }
+pre.highlight .gp { color: #57606a; }
+pre.highlight .gs { font-weight: bold; }
+pre.highlight .gu { color: #0550ae; }
+pre.highlight .gt { color: #cf222e; }
+pre.highlight .w  { color: #57606a; }

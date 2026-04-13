@@ -177,6 +177,42 @@ describe AsciidoctorEpub::Converter do
     bytes.size.should be > 0
   end
 
+  it "produces syntax-highlighted output for source code blocks" do
+    input = <<-ADOC
+    = My Book
+
+    == Code
+
+    [source,crystal]
+    ----
+    def hello
+      puts "Hello, World!"
+    end
+    ----
+    ADOC
+
+    doc = Asciidoctor.load(input)
+    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+    # Extract chapter XHTML from the EPUB ZIP
+    chapter_xhtml = ""
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename.ends_with?("chapter-1.xhtml")
+          chapter_xhtml = entry.io.gets_to_end
+        end
+      end
+    end
+
+    chapter_xhtml.should_not be_empty
+    # Should contain Rouge syntax highlighting spans (e.g. .k for keyword, .s for string)
+    chapter_xhtml.should contain(%(<pre class="highlight"><code data-lang="crystal">))
+    chapter_xhtml.should contain(%(<span class="))
+    # "def" is a keyword, should produce a .k or .kd span
+    (chapter_xhtml.includes?("<span class=\"k\">") || chapter_xhtml.includes?("<span class=\"kd\">")).should be_true
+  end
+
   it "converts a document without sections" do
     input = "Just a simple paragraph."
     doc = Asciidoctor.load(input)

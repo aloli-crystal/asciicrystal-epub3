@@ -112,8 +112,15 @@ module AsciidoctorEpub
         content = apply_inline_subs(block)
         %(  <p>#{content}</p>)
       when :listing, :literal
-        content = escape(block.source.to_s)
-        %(  <pre><code>#{content}</code></pre>)
+        source = block.source.to_s
+        lang = block.attr("language")
+        if lang && (lexer = Rouge::RegexLexer.find(lang))
+          tokens = lexer.lex(source)
+          highlighted = Rouge::Formatters::HTML.new.format(tokens)
+          %(  <pre class="highlight"><code data-lang="#{escape(lang)}">#{highlighted}</code></pre>)
+        else
+          %(  <pre><code>#{escape(source)}</code></pre>)
+        end
       when :admonition
         style = (block.attr("style") || block.attr("name") || "note").to_s.downcase
         content = apply_inline_subs(block)

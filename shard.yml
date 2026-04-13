@@ -18,6 +18,9 @@ dependencies:
   crystal-asciidoctor:
     github: aloli-crystal/crystal-asciidoctor
     version: "~> 2.0"
+  crystal-rouge:
+    github: aloli-crystal/crystal-rouge
+    version: "~> 4.7"
 
 development_dependencies:
   ameba:

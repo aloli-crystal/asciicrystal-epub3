@@ -1,3 +1,4 @@
+require "crystal-rouge"
 require "./asciidoctor_epub/epub_builder"
 require "./asciidoctor_epub/xhtml_builder"
 require "./asciidoctor_epub/epub_writer"
