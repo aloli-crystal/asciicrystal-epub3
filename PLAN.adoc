@@ -1,26 +1,26 @@
-= crystal-asciidoctor-epub — Plan de développement
-Philippe Nénert — ALOLI sas à Laguiole
-:revdate: 2026-04-12
+= crystal-asciidoctor-epub3 -- Plan de developpement
+Philippe Nenert -- ALOLI sas a Laguiole
+:revdate: 2026-04-09
 :toc: left
 :toclevels: 2
 
-== 1. État actuel (v0.1.0)
+== 1. Etat actuel (v2.3.0)
 
-=== Ce qui est implémenté
+=== Ce qui est implemente
 
 [cols="2,1,2"]
 |===
-| Fonctionnalité | État | Détail
+| Fonctionnalite | Etat | Detail
 
 | Structure EPUB3 valide
 | ✓ Complet
 | mimetype, container.xml, content.opf, toc.ncx, nav.xhtml
 
-| Métadonnées
+| Metadonnees
 | ✓ Complet
-| Titre, auteur(s), langue, description, éditeur, date, identifiant UUID
+| Titre, auteur(s), langue, description, editeur, date, identifiant UUID
 
-| Découpage en chapitres
+| Decoupage en chapitres
 | ✓ Complet
 | Un fichier XHTML par section de niveau 1
 
@@ -28,21 +28,25 @@ Philippe Nénert — ALOLI sas à Laguiole
 | ✓ Complet
 | Avec substitutions inline (gras, italique, mono, liens)
 
-| Sections imbriquées
+| Sections imbriquees
 | ✓ Complet
 | Niveaux 1-6
 
 | Listes
 | ✓ Complet
-| Ordonnées et non ordonnées
+| Ordonnees et non ordonnees
+
+| Listes de description
+| ✓ Complet
+| Rendu `<dl><dt><dd>` avec termes et definitions
 
 | Tableaux
 | ✓ Complet
-| En-têtes et corps
+| En-tetes et corps
 
 | Blocs de code
-| ✓ Basique
-| Rendu `<pre><code>` sans coloration syntaxique
+| ✓ Complet
+| Coloration syntaxique via crystal-rouge
 
 | Admonitions
 | ✓ Complet
@@ -54,125 +58,110 @@ Philippe Nénert — ALOLI sas à Laguiole
 
 | Vers (verse)
 | ✓ Complet
-| Préformaté
+| Preformate
 
 | Sidebars
 | ✓ Complet
 | Rendu `<aside>`
 
 | Images
-| ✓ Partiel
-| Référence dans le XHTML, mais pas embarquées dans le ZIP
+| ✓ Complet
+| Referenceees dans le XHTML et embarquees dans le ZIP EPUB
 
-| Sauts thématiques
+| Page de couverture
+| ✓ Complet
+| Generee automatiquement depuis l'attribut `:front-cover-image:`
+
+| Notes de bas de page
+| ✓ Complet
+| Rendues en fin de chapitre avec liens retour
+
+| Table des matieres hierarchique
+| ✓ Complet
+| NAV et NCX avec sous-sections imbriquees
+
+| Sauts thematiques
 | ✓ Complet
 | `<hr/>`
 
-| Table des matières (NCX)
+| Table des matieres (NCX)
 | ✓ Complet
-| Navigation EPUB2 compatible
+| Navigation EPUB2 compatible, hierarchique
 
-| Table des matières (NAV)
+| Table des matieres (NAV)
 | ✓ Complet
-| Navigation EPUB3
+| Navigation EPUB3, hierarchique
 
 | Feuille de style
 | ✓ Complet
-| CSS par défaut inclus dans le ZIP
+| CSS par defaut inclus dans le ZIP
 
 | CLI
 | ✓ Complet
-| `crystal-asciidoctor-epub document.adoc`
+| `crystal-asciidoctor-epub3 document.adoc`
 
 | API programmatique
 | ✓ Complet
-| `convert` → Bytes, `convert_to_file` → fichier
+| `convert` -> Bytes, `convert_to_file` -> fichier
 
 | Tests
-| ✓ 17 pass
+| ✓ 27 pass
 | EpubBuilder, XhtmlBuilder, EpubWriter, Converter
+
+| Monitoring upstream
+| ✓ Complet
+| GitHub Actions workflow hebdomadaire
 |===
 
 === Architecture
 
 ....
 AsciidoctorEpub::Converter
-  ├── EpubBuilder     (structure EPUB : OPF, NCX, NAV, métadonnées)
+  ├── EpubBuilder     (structure EPUB : OPF, NCX, NAV, metadonnees)
   ├── XhtmlBuilder    (chapitres XHTML5 valides, page de couverture, page de titre)
-  └── EpubWriter      (assemblage ZIP avec Compress::Zip)
+  └── EpubWriter      (assemblage ZIP avec Compress::Zip, images embarquees)
 ....
 
-== 2. Ce qui manque
+== 2. Ce qui reste a faire
 
-=== Priorité haute
-
-[cols="1,2,1"]
-|===
-| Fonctionnalité | Description | Dépendance
-
-| Coloration syntaxique
-| Les blocs `[source,lang]` devraient produire du HTML coloré dans l'EPUB
-| Attend `crystal-rouge`
-
-| Embarquer les images
-| Les images référencées dans le document doivent être copiées dans le ZIP EPUB (`OEBPS/images/`)
-| Aucune
-
-| Page de couverture automatique
-| Générer une page de couverture à partir de l'attribut `:front-cover-image:` du document
-| Aucune
-|===
-
-=== Priorité moyenne
+=== Priorite moyenne
 
 [cols="1,2,1"]
 |===
-| Fonctionnalité | Description | Dépendance
-
-| Listes de description
-| Les listes `term:: definition` ne sont pas encore converties
-| Aucune
+| Fonctionnalite | Description | Dependance
 
 | Colspan/rowspan dans les tableaux
-| Les tableaux avec fusion de cellules ne sont pas gérés
+| Les tableaux avec fusion de cellules ne sont pas geres
 | Aucune
 
-| Polices embarquées
-| Permettre d'inclure des polices TTF/OTF dans l'EPUB via le thème
-| Aucune
-
-| Notes de bas de page
-| Les footnotes AsciiDoc devraient apparaître en fin de chapitre
+| Polices embarquees
+| Permettre d'inclure des polices TTF/OTF dans l'EPUB via le theme
 | Aucune
 
 | Index
-| Générer un index alphabétique comme dans crystal-asciidoctor-pdf
-| Aucune
-
-| Table des matières hiérarchique
-| La NAV et le NCX sont actuellement plats (niveau 1 uniquement). Ajouter les sous-sections.
+| Generer un index alphabetique comme dans crystal-asciidoctor-pdf
 | Aucune
 |===
 
-=== Priorité basse
+=== Priorite basse
 
 [cols="1,2,1"]
 |===
-| Fonctionnalité | Description | Dépendance
+| Fonctionnalite | Description | Dependance
 
-| Thèmes YAML
+| Themes YAML
 | Permettre de personnaliser le CSS via un fichier YAML (comme crystal-asciidoctor-pdf)
 | Aucune
 
 | Validation EPUBCheck
-| Intégrer la validation via EPUBCheck (outil Java) en post-génération
+| Integrer la validation via EPUBCheck (outil Java) en post-generation
 | EPUBCheck (externe)
 
 | Multiple renditions
 | Layouts alternatifs (ex. paysage/portrait)
 | Aucune
 
-| Audio/vidéo
+| Audio/video
 | Support des macros `audio::` et `video::` d'AsciiDoc
 | Aucune
 |===
@@ -182,27 +171,20 @@ AsciidoctorEpub::Converter
 |===
 | Jalon | Objectif
 
-| v0.1.0 (actuel)
-| 17 tests
+| v2.3.0 (actuel)
+| 27 tests
 
-| v0.2.0
-| 50+ tests (images, couverture, listes de description, footnotes)
+| v2.4.0
+| 50+ tests (colspan/rowspan, polices, index)
 
-| v0.3.0
-| 80+ tests (coloration syntaxique, thèmes, validation)
-
-| v1.0.0
-| 100+ tests
+| v3.0.0
+| 80+ tests (themes, validation)
 |===
 
-== 4. Dépendances de l'écosystème
+== 4. Dependances de l'ecosysteme
 
 ....
-crystal-asciidoctor-epub
-  └── crystal-asciidoctor   (parser AsciiDoc → AST)
-
-crystal-rouge (à venir)
-  └── utilisé par crystal-asciidoctor-epub (coloration syntaxique XHTML)
-  └── utilisé par crystal-asciidoctor-pdf  (coloration syntaxique PDF)
-  └── utilisé par crystal-asciidoctor      (résout les 29 tests pending)
+crystal-asciidoctor-epub3
+  ├── crystal-asciidoctor   (parser AsciiDoc -> AST)
+  └── crystal-rouge         (coloration syntaxique)
 ....

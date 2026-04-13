@@ -2,9 +2,13 @@ require "html"
 require "uuid"
 
 module AsciidoctorEpub
-  # Génère les fichiers de structure EPUB3 : content.opf, toc.ncx, nav.xhtml
+  # Genere les fichiers de structure EPUB3 : content.opf, toc.ncx, nav.xhtml
   class EpubBuilder
-    record Chapter, id : String, title : String, filename : String, content : String
+    # A TOC entry for sub-sections within a chapter
+    record TocEntry, title : String, children : Array(TocEntry) = [] of TocEntry
+
+    record Chapter, id : String, title : String, filename : String, content : String,
+      children : Array(TocEntry) = [] of TocEntry
     record Resource, id : String, filename : String, media_type : String
 
     property title : String = "Untitled"
@@ -23,15 +27,16 @@ module AsciidoctorEpub
       @identifier = "urn:uuid:#{UUID.random}"
     end
 
-    def add_chapter(id : String, title : String, filename : String, content : String)
-      @chapters << Chapter.new(id: id, title: title, filename: filename, content: content)
+    def add_chapter(id : String, title : String, filename : String, content : String,
+                    children : Array(TocEntry) = [] of TocEntry)
+      @chapters << Chapter.new(id: id, title: title, filename: filename, content: content, children: children)
     end
 
     def add_resource(id : String, filename : String, media_type : String)
       @resources << Resource.new(id: id, filename: filename, media_type: media_type)
     end
 
-    # Génère le fichier META-INF/container.xml
+    # Genere le fichier META-INF/container.xml
     def container_xml : String
       <<-XML
       <?xml version="1.0" encoding="UTF-8"?>
@@ -43,7 +48,7 @@ module AsciidoctorEpub
       XML
     end
 
-    # Génère le fichier OEBPS/content.opf (manifeste EPUB3)
+    # Genere le fichier OEBPS/content.opf (manifeste EPUB3)
     def content_opf : String
       modified = Time.utc.to_s("%Y-%m-%dT%H:%M:%SZ")
 
@@ -102,24 +107,47 @@ module AsciidoctorEpub
       end
     end
 
-    # Génère le fichier OEBPS/toc.ncx (navigation EPUB2 compat)
+    # Compute the maximum TOC depth across all chapters
+    private def max_toc_depth : Int32
+      max = 1
+      chapters.each do |ch|
+        depth = 1 + max_depth(ch.children)
+        max = depth if depth > max
+      end
+      max
+    end
+
+    private def max_depth(entries : Array(TocEntry)) : Int32
+      return 0 if entries.empty?
+      entries.map { |e| 1 + max_depth(e.children) }.max
+    end
+
+    # Genere le fichier OEBPS/toc.ncx (navigation EPUB2 compat)
     def toc_ncx : String
+      play_order = [0] # mutable counter wrapped in array
+
       String.build do |io|
         io << %(<?xml version="1.0" encoding="UTF-8"?>\n)
         io << %(<ncx xmlns="http://www.daisy.org/z3986/2005/ncx/" version="2005-1">\n)
         io << %(  <head>\n)
         io << %(    <meta name="dtb:uid" content="#{escape(identifier)}"/>\n)
-        io << %(    <meta name="dtb:depth" content="1"/>\n)
+        io << %(    <meta name="dtb:depth" content="#{max_toc_depth}"/>\n)
         io << %(    <meta name="dtb:totalPageCount" content="0"/>\n)
         io << %(    <meta name="dtb:maxPageNumber" content="0"/>\n)
         io << %(  </head>\n)
         io << %(  <docTitle><text>#{escape(title)}</text></docTitle>\n)
         io << %(  <navMap>\n)
 
-        chapters.each_with_index do |ch, i|
-          io << %(    <navPoint id="navpoint-#{i + 1}" playOrder="#{i + 1}">\n)
+        chapters.each do |ch|
+          play_order[0] += 1
+          order = play_order[0]
+          io << %(    <navPoint id="navpoint-#{order}" playOrder="#{order}">\n)
           io << %(      <navLabel><text>#{escape(ch.title)}</text></navLabel>\n)
           io << %(      <content src="#{escape(ch.filename)}"/>\n)
+
+          # Nested sub-sections
+          render_ncx_children(io, ch.children, ch.filename, play_order, 6)
+
           io << %(    </navPoint>\n)
         end
 
@@ -128,7 +156,24 @@ module AsciidoctorEpub
       end
     end
 
-    # Génère le fichier OEBPS/nav.xhtml (navigation EPUB3)
+    private def render_ncx_children(io : IO, entries : Array(TocEntry), parent_filename : String,
+                                    play_order : Array(Int32), indent : Int32)
+      entries.each do |entry|
+        play_order[0] += 1
+        order = play_order[0]
+        pad = " " * indent
+        # Point to parent filename with fragment (section anchor)
+        io << %(#{pad}<navPoint id="navpoint-#{order}" playOrder="#{order}">\n)
+        io << %(#{pad}  <navLabel><text>#{escape(entry.title)}</text></navLabel>\n)
+        io << %(#{pad}  <content src="#{escape(parent_filename)}"/>\n)
+
+        render_ncx_children(io, entry.children, parent_filename, play_order, indent + 4) unless entry.children.empty?
+
+        io << %(#{pad}</navPoint>\n)
+      end
+    end
+
+    # Genere le fichier OEBPS/nav.xhtml (navigation EPUB3)
     def nav_xhtml : String
       String.build do |io|
         io << %(<?xml version="1.0" encoding="UTF-8"?>\n)
@@ -145,7 +190,14 @@ module AsciidoctorEpub
         io << %(    <ol>\n)
 
         chapters.each do |ch|
-          io << %(      <li><a href="#{escape(ch.filename)}">#{escape(ch.title)}</a></li>\n)
+          if ch.children.empty?
+            io << %(      <li><a href="#{escape(ch.filename)}">#{escape(ch.title)}</a></li>\n)
+          else
+            io << %(      <li>\n)
+            io << %(        <a href="#{escape(ch.filename)}">#{escape(ch.title)}</a>\n)
+            render_nav_children(io, ch.children, ch.filename, 8)
+            io << %(      </li>\n)
+          end
         end
 
         io << %(    </ol>\n)
@@ -153,6 +205,22 @@ module AsciidoctorEpub
         io << %(</body>\n)
         io << %(</html>\n)
       end
+    end
+
+    private def render_nav_children(io : IO, entries : Array(TocEntry), parent_filename : String, indent : Int32)
+      pad = " " * indent
+      io << %(#{pad}<ol>\n)
+      entries.each do |entry|
+        if entry.children.empty?
+          io << %(#{pad}  <li><a href="#{escape(parent_filename)}">#{escape(entry.title)}</a></li>\n)
+        else
+          io << %(#{pad}  <li>\n)
+          io << %(#{pad}    <a href="#{escape(parent_filename)}">#{escape(entry.title)}</a>\n)
+          render_nav_children(io, entry.children, parent_filename, indent + 4)
+          io << %(#{pad}  </li>\n)
+        end
+      end
+      io << %(#{pad}</ol>\n)
     end
 
     private def escape(text : String) : String

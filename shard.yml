@@ -1,5 +1,5 @@
-name: crystal-asciidoctor-epub
-version: 0.1.0
+name: crystal-asciidoctor-epub3
+version: 2.3.0
 
 description: |
   AsciiDoc to EPUB3 converter for Crystal, equivalent of the asciidoctor-epub3 Ruby gem.
@@ -28,7 +28,7 @@ development_dependencies:
     version: "~> 1.6"
 
 targets:
-  crystal-asciidoctor-epub:
-    main: bin/crystal-asciidoctor-epub
+  crystal-asciidoctor-epub3:
+    main: bin/crystal-asciidoctor-epub3
 
 crystal: ">= 1.19.0"

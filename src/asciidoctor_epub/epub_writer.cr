@@ -1,22 +1,24 @@
 require "compress/zip"
 
 module AsciidoctorEpub
-  # Assemble un fichier EPUB (ZIP) à partir d'un EpubBuilder
+  # Assemble un fichier EPUB (ZIP) a partir d'un EpubBuilder
   class EpubWriter
-    def initialize(@builder : EpubBuilder)
+    @image_files : Hash(String, String)
+
+    def initialize(@builder : EpubBuilder, @image_files : Hash(String, String) = {} of String => String)
     end
 
-    # Écrit l'EPUB dans un fichier
+    # Ecrit l'EPUB dans un fichier
     def write(path : String)
       File.open(path, "w") do |file|
         write_to(file)
       end
     end
 
-    # Écrit l'EPUB dans un IO (pour usage en mémoire / serveur web)
+    # Ecrit l'EPUB dans un IO (pour usage en memoire / serveur web)
     def write_to(io : IO)
       Compress::Zip::Writer.open(io) do |zip|
-        # Le fichier mimetype DOIT être le premier et non compressé
+        # Le fichier mimetype DOIT etre le premier et non compresse
         zip.add("mimetype", &.print("application/epub+zip"))
 
         # META-INF
@@ -34,10 +36,18 @@ module AsciidoctorEpub
         @builder.chapters.each do |chapter|
           zip.add("OEBPS/#{chapter.filename}", &.print(chapter.content))
         end
+
+        # Images embedded from the document
+        @image_files.each do |epub_path, local_path|
+          if File.exists?(local_path)
+            image_data = File.read(local_path)
+            zip.add("OEBPS/#{epub_path}", &.print(image_data))
+          end
+        end
       end
     end
 
-    # Écrit l'EPUB en mémoire et retourne les bytes
+    # Ecrit l'EPUB en memoire et retourne les bytes
     def to_bytes : Bytes
       io = IO::Memory.new
       write_to(io)
@@ -54,7 +64,7 @@ module AsciidoctorEpub
     end
 
     DEFAULT_CSS = <<-CSS
-    /* crystal-asciidoctor-epub default stylesheet */
+    /* crystal-asciidoctor-epub3 default stylesheet */
     body {
       font-family: Georgia, "Times New Roman", serif;
       line-height: 1.6;
@@ -125,6 +135,11 @@ module AsciidoctorEpub
     .admonitionblock.important { border-color: #e91e63; }
     a { color: #2156a5; text-decoration: none; }
     .author { font-style: italic; color: #666; }
+    dl { margin: 1em 0; }
+    dt { font-weight: bold; margin-top: 0.5em; }
+    dd { margin-left: 1.5em; margin-bottom: 0.5em; }
+    .footnotes { font-size: 0.85em; margin-top: 2em; }
+    .footnotes-separator { margin-top: 2em; border-top: 1px solid #ccc; }
     CSS
   end
 end

@@ -1,0 +1,51 @@
+name: Check upstream asciidoctor-epub3
+
+on:
+  schedule:
+    - cron: '0 8 * * 1'  # Every Monday at 08:00 UTC
+  workflow_dispatch:
+
+jobs:
+  check-upstream:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check latest asciidoctor-epub3 gem version
+        id: check
+        run: |
+          LATEST=$(curl -s https://rubygems.org/api/v1/versions/asciidoctor-epub3/latest.json | jq -r '.version')
+          CURRENT="2.3.0"
+          echo "latest=$LATEST" >> $GITHUB_OUTPUT
+          echo "current=$CURRENT" >> $GITHUB_OUTPUT
+          if [ "$LATEST" != "$CURRENT" ]; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            echo "Upstream asciidoctor-epub3 has been updated: $CURRENT -> $LATEST"
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+            echo "Upstream asciidoctor-epub3 is still at $CURRENT"
+          fi
+
+      - name: Create issue if upstream changed
+        if: steps.check.outputs.changed == 'true'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const latest = '${{ steps.check.outputs.latest }}';
+            const current = '${{ steps.check.outputs.current }}';
+            const title = `Upstream asciidoctor-epub3 updated to ${latest}`;
+            // Check if issue already exists
+            const issues = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'upstream'
+            });
+            const existing = issues.data.find(i => i.title === title);
+            if (!existing) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                title: title,
+                body: `The upstream Ruby gem asciidoctor-epub3 has been updated from **${current}** to **${latest}**.\n\nPlease review the changes at https://github.com/asciidoctor/asciidoctor-epub3/releases and update crystal-asciidoctor-epub3 accordingly.`,
+                labels: ['upstream']
+              });
+            }

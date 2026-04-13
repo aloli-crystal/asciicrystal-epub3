@@ -5,7 +5,7 @@ require "./asciidoctor_epub/epub_writer"
 require "./asciidoctor_epub/converter"
 
 module AsciidoctorEpub
-  VERSION = "0.1.0"
+  VERSION = "2.3.0"
 
   # Version de la gem Ruby asciidoctor-epub3 utilisée comme référence.
   UPSTREAM_VERSION = "2.3.0"

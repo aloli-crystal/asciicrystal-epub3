@@ -1,4 +1,4 @@
-= crystal-asciidoctor-epub
+= crystal-asciidoctor-epub3
 :toc: left
 :toclevels: 2
 
@@ -9,9 +9,12 @@ link:README.fr.adoc[Version française]
 == Features
 
 * Converts AsciiDoc documents to valid EPUB3 files
-* Sections, paragraphs, lists (ordered/unordered), tables
-* Code blocks, admonitions, blockquotes, verses, sidebars
-* Images, thematic breaks
+* Sections, paragraphs, lists (ordered/unordered/description), tables
+* Code blocks with syntax highlighting (via crystal-rouge), admonitions, blockquotes, verses, sidebars
+* Images embedded in EPUB ZIP, thematic breaks
+* Cover page from `:front-cover-image:` attribute
+* Footnotes with back-links
+* Hierarchical table of contents (nested sections)
 * Table of contents (NCX + EPUB3 NAV)
 * PDF bookmarks equivalent (NCX navigation)
 * Metadata: title, author, language, description, publisher
@@ -29,9 +32,9 @@ Add to your `shard.yml`:
 [source,yaml]
 ----
 dependencies:
-  crystal-asciidoctor-epub:
-    github: aloli-crystal/crystal-asciidoctor-epub
-    version: "~> 0.1"
+  crystal-asciidoctor-epub3:
+    github: aloli-crystal/crystal-asciidoctor-epub3
+    version: "~> 2.3"
 ----
 
 Then run `shards install`.
@@ -40,10 +43,10 @@ Then run `shards install`.
 
 [source,bash]
 ----
-git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub.git
-cd crystal-asciidoctor-epub
+git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
+cd crystal-asciidoctor-epub3
 shards build --release
-sudo cp bin/crystal-asciidoctor-epub /usr/local/bin/
+sudo cp bin/crystal-asciidoctor-epub3 /usr/local/bin/
 ----
 
 == Usage
@@ -106,7 +109,7 @@ Kemal.run
 
 [source,bash]
 ----
-crystal-asciidoctor-epub document.adoc
+crystal-asciidoctor-epub3 document.adoc
 # => Generates document.epub
 ----
 
@@ -140,9 +143,9 @@ Options:
 | 2.0.26
 | 2025-10-24
 
-| *crystal-asciidoctor-epub*
-| 0.1.0
-| 2026-04-12
+| *crystal-asciidoctor-epub3*
+| 2.3.0
+| 2026-04-09
 |===
 
 == Development
@@ -150,8 +153,8 @@ Options:
 [source,bash]
 ----
 git clone https://github.com/aloli-crystal/crystal-asciidoctor.git
-git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub.git
-cd crystal-asciidoctor-epub
+git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
+cd crystal-asciidoctor-epub3
 shards install
 crystal spec
 ----

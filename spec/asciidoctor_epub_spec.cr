@@ -62,6 +62,55 @@ describe AsciidoctorEpub::EpubBuilder do
     opf.should contain("images/cover.jpg")
     opf.should contain("image/jpeg")
   end
+
+  it "generates hierarchical nav.xhtml with nested sections" do
+    builder = AsciidoctorEpub::EpubBuilder.new
+    builder.title = "Test Book"
+
+    children = [
+      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2", [
+        AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2.1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      ]),
+    ]
+    builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "", children)
+
+    nav = builder.nav_xhtml
+    nav.should contain("<a href=\"chapter-1.xhtml\">Chapter 1</a>")
+    nav.should contain("<a href=\"chapter-1.xhtml\">Section 1.1</a>")
+    nav.should contain("<a href=\"chapter-1.xhtml\">Section 1.2</a>")
+    nav.should contain("<a href=\"chapter-1.xhtml\">Section 1.2.1</a>")
+    # Should have nested <ol> elements
+    nav.scan(/<ol>/).size.should be >= 2
+  end
+
+  it "generates hierarchical toc.ncx with nested navPoints" do
+    builder = AsciidoctorEpub::EpubBuilder.new
+    builder.title = "Test Book"
+
+    children = [
+      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+    ]
+    builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "", children)
+
+    ncx = builder.toc_ncx
+    ncx.should contain("<text>Chapter 1</text>")
+    ncx.should contain("<text>Section 1.1</text>")
+    # Depth should reflect the hierarchy
+    ncx.should contain("dtb:depth")
+    ncx.should contain("content=\"2\"")
+    # Should have nested navPoint
+    ncx.scan(/navPoint/).size.should be >= 4 # opening + closing for 2 navPoints
+  end
+
+  it "includes resources in manifest" do
+    builder = AsciidoctorEpub::EpubBuilder.new
+    builder.add_resource("img-photo", "images/photo.png", "image/png")
+    opf = builder.content_opf
+    opf.should contain("id=\"img-photo\"")
+    opf.should contain("href=\"images/photo.png\"")
+    opf.should contain("media-type=\"image/png\"")
+  end
 end
 
 describe AsciidoctorEpub::XhtmlBuilder do
@@ -118,6 +167,36 @@ describe AsciidoctorEpub::EpubWriter do
     File.size(path).should be > 0
   ensure
     File.delete("spec/output/test.epub") if File.exists?("spec/output/test.epub")
+  end
+
+  it "embeds image files in the ZIP" do
+    # Create a temporary test image
+    Dir.mkdir_p("spec/output")
+    test_image_path = "spec/output/test_image.png"
+    File.write(test_image_path, "FAKE_PNG_DATA")
+
+    builder = AsciidoctorEpub::EpubBuilder.new
+    builder.title = "Test"
+    builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml",
+      AsciidoctorEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
+
+    image_files = {"images/test_image.png" => test_image_path}
+    bytes = AsciidoctorEpub::EpubWriter.new(builder, image_files).to_bytes
+
+    # Verify the image is in the ZIP
+    found_image = false
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename == "OEBPS/images/test_image.png"
+          found_image = true
+          entry.io.gets_to_end.should eq("FAKE_PNG_DATA")
+        end
+      end
+    end
+    found_image.should be_true
+  ensure
+    File.delete("spec/output/test_image.png") if File.exists?("spec/output/test_image.png")
   end
 end
 
@@ -228,7 +307,7 @@ describe AsciidoctorEpub::Converter do
 
     == Introduction
 
-    Un paragraphe en français.
+    Un paragraphe en francais.
 
     == Chapitre 2
 
@@ -261,5 +340,191 @@ describe AsciidoctorEpub::Converter do
     doc = Asciidoctor.load(input)
     bytes = AsciidoctorEpub::Converter.new.convert(doc)
     bytes.size.should be > 0
+  end
+
+  it "converts a document with description lists" do
+    input = <<-ADOC
+    = My Book
+
+    == Glossary
+
+    CPU:: Central Processing Unit
+    RAM:: Random Access Memory
+    SSD:: Solid State Drive
+    ADOC
+
+    doc = Asciidoctor.load(input)
+    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+    # Extract chapter XHTML from the EPUB ZIP
+    chapter_xhtml = ""
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename.ends_with?("chapter-1.xhtml")
+          chapter_xhtml = entry.io.gets_to_end
+        end
+      end
+    end
+
+    chapter_xhtml.should_not be_empty
+    chapter_xhtml.should contain("<dl>")
+    chapter_xhtml.should contain("<dt>")
+    chapter_xhtml.should contain("<dd>")
+    chapter_xhtml.should contain("</dl>")
+  end
+
+  it "converts a document with images and tracks them as resources" do
+    input = <<-ADOC
+    = My Book
+
+    == Chapter with Image
+
+    image::photo.png[A photo]
+    ADOC
+
+    doc = Asciidoctor.load(input)
+    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+    # Extract chapter XHTML from the EPUB ZIP
+    chapter_xhtml = ""
+    opf_content = ""
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename.ends_with?("chapter-1.xhtml")
+          chapter_xhtml = entry.io.gets_to_end
+        end
+        if entry.filename.ends_with?("content.opf")
+          opf_content = entry.io.gets_to_end
+        end
+      end
+    end
+
+    chapter_xhtml.should contain("images/photo.png")
+    chapter_xhtml.should contain("<figure>")
+    # OPF manifest should include the image resource
+    opf_content.should contain("images/photo.png")
+    opf_content.should contain("image/png")
+  end
+
+  it "generates hierarchical TOC for nested sections" do
+    input = <<-ADOC
+    = My Book
+
+    == Chapter 1
+
+    Intro.
+
+    === Section 1.1
+
+    Content of section 1.1.
+
+    === Section 1.2
+
+    Content of section 1.2.
+
+    == Chapter 2
+
+    More content.
+    ADOC
+
+    doc = Asciidoctor.load(input)
+    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+    nav_xhtml = ""
+    ncx_content = ""
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename.ends_with?("nav.xhtml")
+          nav_xhtml = entry.io.gets_to_end
+        end
+        if entry.filename.ends_with?("toc.ncx")
+          ncx_content = entry.io.gets_to_end
+        end
+      end
+    end
+
+    # NAV should have nested ol for sub-sections
+    nav_xhtml.should contain("Section 1.1")
+    nav_xhtml.should contain("Section 1.2")
+    nav_xhtml.scan(/<ol>/).size.should be >= 2
+
+    # NCX should have nested navPoints
+    ncx_content.should contain("Section 1.1")
+    ncx_content.should contain("Section 1.2")
+  end
+
+  it "handles cover page when front-cover-image attribute is set" do
+    # Create a temporary cover image
+    Dir.mkdir_p("spec/output")
+    File.write("spec/output/cover.jpg", "FAKE_JPEG")
+
+    input = <<-ADOC
+    = My Book
+    Author Name
+    :front-cover-image: image:cover.jpg[]
+
+    == Chapter 1
+
+    Content.
+    ADOC
+
+    doc = Asciidoctor.load(input, {"base_dir" => "spec/output"})
+    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+    cover_xhtml = ""
+    opf_content = ""
+    found_cover_image = false
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename.ends_with?("cover.xhtml")
+          cover_xhtml = entry.io.gets_to_end
+        end
+        if entry.filename.ends_with?("content.opf")
+          opf_content = entry.io.gets_to_end
+        end
+        if entry.filename == "OEBPS/images/cover.jpg"
+          found_cover_image = true
+          entry.io.gets_to_end.should eq("FAKE_JPEG")
+        end
+      end
+    end
+
+    cover_xhtml.should contain("epub:type=\"cover\"")
+    cover_xhtml.should contain("images/cover.jpg")
+    opf_content.should contain("cover-image")
+    found_cover_image.should be_true
+  ensure
+    File.delete("spec/output/cover.jpg") if File.exists?("spec/output/cover.jpg")
+  end
+
+  it "converts a document with footnotes" do
+    input = <<-ADOC
+    = My Book
+
+    == Chapter 1
+
+    This has a footnote.footnote:[This is the footnote text.]
+    ADOC
+
+    doc = Asciidoctor.load(input)
+    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+
+    chapter_xhtml = ""
+    io = IO::Memory.new(bytes)
+    Compress::Zip::Reader.open(io) do |zip|
+      zip.each_entry do |entry|
+        if entry.filename.ends_with?("chapter-1.xhtml")
+          chapter_xhtml = entry.io.gets_to_end
+        end
+      end
+    end
+
+    chapter_xhtml.should_not be_empty
+    # Should contain footnotes section
+    chapter_xhtml.should contain("footnotes")
   end
 end
