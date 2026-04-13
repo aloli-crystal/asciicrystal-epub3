@@ -122,12 +122,27 @@ Options:
 | `-o FILE`, `--out-file FILE`
 | Output EPUB file (default: `<input>.epub`)
 
+| `--sample`
+| Generate reference document (`reference.adoc` + `reference.adoc.epub`)
+
 | `-v`, `--version`
 | Show version
 
 | `-h`, `--help`
 | Show help
 |===
+
+=== Reference document
+
+The `--sample` option generates a comprehensive AsciiDoc document and its EPUB, covering all AsciiDoc elements (formatting, lists, tables, code, admonitions, formulas, diagrams, etc.):
+
+[source,bash]
+----
+crystal-asciidoctor-epub3 --sample
+# → reference.adoc + reference.adoc.epub
+----
+
+This document serves as a conformance test for validating EPUB rendering.
 
 == Versions
 
