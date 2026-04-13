@@ -7,7 +7,7 @@ output_file = ""
 
 OptionParser.parse do |parser|
   parser.banner = "Usage: crystal-asciidoctor-epub3 [options] fichier.adoc"
-  parser.on("-o FILE", "--out-file FILE", "Output EPUB file (default: <input>.epub)") { |f| output_file = f }
+  parser.on("-o FILE", "--out-file FILE", "Output EPUB file (default: <input>.adoc.epub)") { |f| output_file = f }
   parser.on("-h", "--help", "Show help") { puts parser; exit 0 }
   parser.on("-v", "--version", "Show version") { puts "crystal-asciidoctor-epub3 #{AsciidoctorEpub::VERSION}"; exit 0 }
   parser.unknown_args { |args| input_file = args.first? || "" }
@@ -27,7 +27,7 @@ end
 if output_file.empty?
   output_file = File.join(
     File.dirname(input_file),
-    File.basename(input_file, File.extname(input_file)) + ".epub"
+    File.basename(input_file) + ".epub"
   )
 end
 
