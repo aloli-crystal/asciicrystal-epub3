@@ -3,6 +3,28 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.2 — 2026-04-23
+
+Suite de tests d'intégration bout-en-bout pour le pipeline AsciiDoc →
+EPUB3. De petits extraits AsciiDoc font un aller-retour à travers le
+vrai converter, l'`.epub` produit est rouvert comme ZIP via
+`Compress::Zip::Reader` de la stdlib, et les entrées attendues
+(`mimetype`, `META-INF/container.xml`, `OEBPS/content.opf`,
+`OEBPS/nav.xhtml`, `OEBPS/toc.ncx`, XHTMLs des chapitres) sont
+contrôlées.
+
+* 3 nouveaux fichiers de specs sous `spec/integration/` : **sanity**
+  (type MIME et entrées de squelette présents), **metadata** (doctitle
+  → `<dc:title>`, auteur → `<dc:creator>`, lang → `<dc:language>`,
+  chapitres listés dans la spine OPF + nav.xhtml + toc.ncx) et
+  **content** (paragraphes, titres, listes non ordonnées/ordonnées,
+  tableaux, admonitions, blocs source). **14 tests d'intégration,
+  27 tests unitaires, 41 au total — tous verts.**
+* Nouveau helper `IntegrationHelper` dans
+  `spec/integration/spec_helper.cr` exposant `convert`, `entries`,
+  `read_entry`, `chapters_text` et `produces_epub?`. Pur Crystal, zéro
+  dépendance sur un outil externe (pas de `unzip`, pas d'`epubcheck`).
+
 == v2.3.0.1 — 2026-04-22
 
 * Ajout du linter *ameba* à la CI avec configuration `.ameba.yml` partagée alignée sur l'écosystème Crystal.
