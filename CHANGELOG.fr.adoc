@@ -3,6 +3,33 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.3 — 2026-04-25
+
+Ancres TOC vers les sous-sections. Les entrées de nav.xhtml et
+toc.ncx pour les sous-sections incluent désormais un `#fragment`
+correspondant à l'id du titre, pour que les lecteurs EPUB (Apple
+Books, Calibre, Thorium, …) sautent directement au titre dans le
+chapitre — pas uniquement au début du fichier de chapitre. Les
+chapitres de premier niveau continuent de pointer vers la racine
+du fichier, inchangé.
+
+* `Converter#convert_section` émet l'id de la section à la fois
+  sur l'élément `<section>` englobant et sur le titre `<hN>`. L'id
+  est repris du source AsciiDoc (`[[ancre]]` ou auto-généré par le
+  parseur, ex. `_overview`) ; un slug du titre sert de repli en
+  dernier recours.
+* `EpubBuilder::TocEntry` gagne un champ `id` requis. Les
+  renderers `nav_xhtml` et `toc_ncx` l'enchaînent au nom de
+  fichier parent pour produire
+  `href="chapter-1.xhtml#_inner_section"` /
+  `<content src="chapter-1.xhtml#_alpha"/>`.
+* 5 nouveaux tests d'intégration dans
+  `spec/integration/toc_anchors_spec.cr` qui couvrent les ids dans
+  le XHTML produit, les hrefs avec fragment dans nav.xhtml +
+  toc.ncx, la syntaxe `[[id]]` explicite d'AsciiDoc et
+  l'imbrication récursive jusqu'au niveau 4. **19 tests
+  d'intégration, 27 tests unitaires, 46 au total — tous verts.**
+
 == v2.3.0.2 — 2026-04-23
 
 Suite de tests d'intégration bout-en-bout pour le pipeline AsciiDoc →

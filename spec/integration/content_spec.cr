@@ -21,7 +21,10 @@ describe "Integration · rendered content" do
       Body.
       ADOC
     )
-    text.should contain("<h1>Heading One</h1>")
+    # The heading carries an `id="…-h"` attribute (anchor target for
+    # the in-doc TOC navigation), so we match on the open tag prefix
+    # plus the visible text rather than on the bare `<h1>` form.
+    text.should match(/<h1[^>]*>Heading One<\/h1>/)
   end
 
   it "emits <ul>/<li> for unordered lists" do

@@ -121,10 +121,28 @@ module AsciidoctorEpub
         if block.is_a?(Asciidoctor::Section)
           sub = block.as(Asciidoctor::Section)
           children = collect_subsections(sub)
-          entries << EpubBuilder::TocEntry.new(sub.title.to_s, children)
+          entries << EpubBuilder::TocEntry.new(
+            title: sub.title.to_s,
+            id: section_anchor_id(sub),
+            children: children,
+          )
         end
       end
       entries
+    end
+
+    # Builds the XHTML id used as the anchor target for a section.
+    # Prefers the explicit AsciiDoc id (`[[my-anchor]]` or auto-generated
+    # by the parser, e.g. `_overview`) so the same id surfaces both in
+    # the rendered XHTML and in the nav.xhtml / toc.ncx entries.
+    private def section_anchor_id(section : Asciidoctor::Section) : String
+      if (id = section.id) && !id.empty?
+        id
+      else
+        # Fallback for the rare case where the parser didn't set an id:
+        # slugify the title to keep the link useful.
+        section.title.to_s.downcase.gsub(/[^a-z0-9]+/, "-").strip("-")
+      end
     end
 
     private def add_chapter(id : String, title : String, filename : String, body_html : String,
@@ -152,8 +170,14 @@ module AsciidoctorEpub
     private def convert_section(section : Asciidoctor::Section) : String
       String.build do |io|
         level = section.level
-        io << %(  <section>\n)
-        io << %(    <h#{level}>#{escape(section.title.to_s)}</h#{level}>\n)
+        anchor_id = section_anchor_id(section)
+        # Emit the section id on both the wrapping <section> and the
+        # heading itself: nav.xhtml / toc.ncx point at this id via
+        # `href="<file>#<id>"`, and EPUB readers honour it for in-doc
+        # navigation. Putting the id on the heading too is friendlier
+        # to screen readers and to fragment-aware viewers.
+        io << %(  <section id="#{escape(anchor_id)}">\n)
+        io << %(    <h#{level} id="#{escape(anchor_id)}-h">#{escape(section.title.to_s)}</h#{level}>\n)
 
         section.blocks.each do |block|
           io << convert_block(block)

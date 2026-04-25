@@ -68,18 +68,21 @@ describe AsciidoctorEpub::EpubBuilder do
     builder.title = "Test Book"
 
     children = [
-      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
-      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2", [
-        AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2.1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", "sec-1-1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2", "sec-1-2", [
+        AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2.1", "sec-1-2-1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
       ]),
     ]
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "", children)
 
     nav = builder.nav_xhtml
+    # Top-level chapter still links to the file root
     nav.should contain("<a href=\"chapter-1.xhtml\">Chapter 1</a>")
-    nav.should contain("<a href=\"chapter-1.xhtml\">Section 1.1</a>")
-    nav.should contain("<a href=\"chapter-1.xhtml\">Section 1.2</a>")
-    nav.should contain("<a href=\"chapter-1.xhtml\">Section 1.2.1</a>")
+    # Sub-section entries now link to the parent file with a fragment
+    # anchor, so the EPUB reader scrolls to the matching heading.
+    nav.should contain("<a href=\"chapter-1.xhtml#sec-1-1\">Section 1.1</a>")
+    nav.should contain("<a href=\"chapter-1.xhtml#sec-1-2\">Section 1.2</a>")
+    nav.should contain("<a href=\"chapter-1.xhtml#sec-1-2-1\">Section 1.2.1</a>")
     # Should have nested <ol> elements
     nav.scan(/<ol>/).size.should be >= 2
   end
@@ -89,7 +92,7 @@ describe AsciidoctorEpub::EpubBuilder do
     builder.title = "Test Book"
 
     children = [
-      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", "sec-1-1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
     ]
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "", children)
 

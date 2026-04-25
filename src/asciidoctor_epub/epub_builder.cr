@@ -4,8 +4,13 @@ require "uuid"
 module AsciidoctorEpub
   # Genere les fichiers de structure EPUB3 : content.opf, toc.ncx, nav.xhtml
   class EpubBuilder
-    # A TOC entry for sub-sections within a chapter
-    record TocEntry, title : String, children : Array(TocEntry) = [] of TocEntry
+    # A TOC entry for sub-sections within a chapter.
+    # `id` is the XHTML element id used as the in-document anchor; the
+    # nav.xhtml and toc.ncx render `href="<file>#<id>"` so that clicking
+    # a sub-section in the table of contents jumps to the matching
+    # heading inside the chapter, not just to the top of the file.
+    record TocEntry, title : String, id : String,
+      children : Array(TocEntry) = [] of TocEntry
 
     record Chapter, id : String, title : String, filename : String, content : String,
       children : Array(TocEntry) = [] of TocEntry
@@ -162,10 +167,13 @@ module AsciidoctorEpub
         play_order[0] += 1
         order = play_order[0]
         pad = " " * indent
-        # Point to parent filename with fragment (section anchor)
+        # Point to the parent file with a fragment anchor so the EPUB
+        # reader scrolls to the matching heading, not just to the top
+        # of the chapter.
+        href = "#{parent_filename}##{entry.id}"
         io << %(#{pad}<navPoint id="navpoint-#{order}" playOrder="#{order}">\n)
         io << %(#{pad}  <navLabel><text>#{escape(entry.title)}</text></navLabel>\n)
-        io << %(#{pad}  <content src="#{escape(parent_filename)}"/>\n)
+        io << %(#{pad}  <content src="#{escape(href)}"/>\n)
 
         render_ncx_children(io, entry.children, parent_filename, play_order, indent + 4) unless entry.children.empty?
 
@@ -211,11 +219,14 @@ module AsciidoctorEpub
       pad = " " * indent
       io << %(#{pad}<ol>\n)
       entries.each do |entry|
+        # Same logic as the NCX path: chain the entry's anchor id to
+        # the parent filename so the link jumps inside the chapter.
+        href = "#{parent_filename}##{entry.id}"
         if entry.children.empty?
-          io << %(#{pad}  <li><a href="#{escape(parent_filename)}">#{escape(entry.title)}</a></li>\n)
+          io << %(#{pad}  <li><a href="#{escape(href)}">#{escape(entry.title)}</a></li>\n)
         else
           io << %(#{pad}  <li>\n)
-          io << %(#{pad}    <a href="#{escape(parent_filename)}">#{escape(entry.title)}</a>\n)
+          io << %(#{pad}    <a href="#{escape(href)}">#{escape(entry.title)}</a>\n)
           render_nav_children(io, entry.children, parent_filename, indent + 4)
           io << %(#{pad}  </li>\n)
         end

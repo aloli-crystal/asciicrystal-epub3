@@ -3,6 +3,31 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.3 — 2026-04-25
+
+Sub-section TOC anchors. The nav.xhtml and toc.ncx entries for
+sub-sections now carry a `#fragment` matching the heading id, so
+EPUB readers (Apple Books, Calibre, Thorium, …) jump directly to
+the matching heading inside the chapter — not just to the top of
+the chapter file. Top-level chapters still link to the file root,
+unchanged.
+
+* `Converter#convert_section` emits the section's id on both the
+  wrapping `<section>` element and the `<hN>` heading. The id is
+  taken from the AsciiDoc source (`[[anchor]]` or auto-generated
+  by the parser, e.g. `_overview`); a slugified title is used as
+  a last-resort fallback.
+* `EpubBuilder::TocEntry` gains a required `id` field. The
+  `nav_xhtml` and `toc_ncx` renderers chain it onto the parent
+  filename to produce `href="chapter-1.xhtml#_inner_section"` /
+  `<content src="chapter-1.xhtml#_alpha"/>`.
+* 5 new integration tests in
+  `spec/integration/toc_anchors_spec.cr` covering the ids in the
+  generated XHTML, the fragment-aware hrefs in nav.xhtml + toc.ncx,
+  the explicit `[[id]]` AsciiDoc syntax, and recursive nesting up
+  to level 4. **19 integration tests, 27 unit tests, 46 total —
+  all green.**
+
 == v2.3.0.2 — 2026-04-23
 
 End-to-end integration test suite for the AsciiDoc → EPUB3 pipeline.
