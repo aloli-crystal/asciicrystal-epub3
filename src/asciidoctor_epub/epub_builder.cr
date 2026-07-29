@@ -1,7 +1,7 @@
 require "html"
 require "uuid"
 
-module AsciidoctorEpub
+module AsciicrystalEpub
   # Genere les fichiers de structure EPUB3 : content.opf, toc.ncx, nav.xhtml
   class EpubBuilder
     # A TOC entry for sub-sections within a chapter.

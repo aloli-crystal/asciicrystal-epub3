@@ -25,7 +25,7 @@ describe "Integration · TOC anchors" do
     path = IntegrationHelper.convert(source)
     begin
       text = IntegrationHelper.chapters_text(path)
-      # The crystal-asciidoctor parser auto-generates ids for headings
+      # The asciicrystal parser auto-generates ids for headings
       # (e.g. `_subsection_a`). Both the wrapping <section> and the
       # <hN> heading should carry the id so any fragment-aware reader
       # finds it.

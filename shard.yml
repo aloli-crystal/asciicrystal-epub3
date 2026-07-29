@@ -1,9 +1,9 @@
-name: crystal-asciidoctor-epub3
-version: 2.3.0.4
+name: asciicrystal-epub3
+version: 2.3.0.5
 
 description: |
   AsciiDoc to EPUB3 converter for Crystal, equivalent of the asciidoctor-epub3 Ruby gem.
-  Depends on crystal-asciidoctor (parser/AST).
+  Depends on asciicrystal (parser/AST).
   Ported from Ruby asciidoctor-epub3 2.3.0 (2025-08-31).
 
 authors:
@@ -12,15 +12,15 @@ authors:
 license: MIT
 
 # Pour le développement local, remplacer par :
-#   crystal-asciidoctor:
-#     path: ../crystal-asciidoctor
+#   asciicrystal:
+#     path: ../asciicrystal
 dependencies:
-  crystal-asciidoctor:
-    github: aloli-crystal/crystal-asciidoctor
-    version: "~> 2.0"
-  crystal-rouge:
-    github: aloli-crystal/crystal-rouge
-    version: "~> 4.7"
+  asciicrystal:
+    github: aloli-crystal/asciicrystal
+    version: "~> 2.0.26.12"
+  rouge:
+    github: aloli-crystal/rouge
+    version: "~> 4.7.0.3"
 
 development_dependencies:
   ameba:
@@ -28,7 +28,7 @@ development_dependencies:
     version: "~> 1.6"
 
 targets:
-  crystal-asciidoctor-epub3:
-    main: bin/crystal-asciidoctor-epub3
+  asciicrystal-epub3:
+    main: bin/asciicrystal-epub3
 
 crystal: ">= 1.19.0"

@@ -7,8 +7,8 @@ Ajouter dans votre `shard.yml` :
 [source,yaml]
 ----
 dependencies:
-  crystal-asciidoctor-epub3:
-    github: aloli-crystal/crystal-asciidoctor-epub3
+  asciicrystal-epub3:
+    github: aloli-crystal/asciicrystal-epub3
     version: "~> 2.3"
 ----
 
@@ -18,8 +18,8 @@ Puis executer `shards install`.
 
 [source,bash]
 ----
-git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
-cd crystal-asciidoctor-epub3
+git clone https://github.com/aloli-crystal/asciicrystal-epub3.git
+cd asciicrystal-epub3
 shards build --release
-ln -s "$PWD/bin/crystal-asciidoctor-epub3" ~/bin/
+ln -s "$PWD/bin/asciicrystal-epub3" ~/bin/
 ----

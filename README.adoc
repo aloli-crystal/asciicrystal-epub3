@@ -1,4 +1,4 @@
-= crystal-asciidoctor-epub3
+= asciicrystal-epub3
 :toc: left
 :toclevels: 2
 
@@ -10,7 +10,7 @@ link:README.fr.adoc[Version française]
 
 * Converts AsciiDoc documents to valid EPUB3 files
 * Sections, paragraphs, lists (ordered/unordered/description), tables
-* Code blocks with syntax highlighting (via crystal-rouge), admonitions, blockquotes, verses, sidebars
+* Code blocks with syntax highlighting (via rouge), admonitions, blockquotes, verses, sidebars
 * Images embedded in EPUB ZIP, thematic breaks
 * Cover page from `:front-cover-image:` attribute
 * Footnotes with back-links
@@ -32,8 +32,8 @@ Add to your `shard.yml`:
 [source,yaml]
 ----
 dependencies:
-  crystal-asciidoctor-epub3:
-    github: aloli-crystal/crystal-asciidoctor-epub3
+  asciicrystal-epub3:
+    github: aloli-crystal/asciicrystal-epub3
     version: "~> 2.3"
 ----
 
@@ -43,10 +43,10 @@ Then run `shards install`.
 
 [source,bash]
 ----
-git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
-cd crystal-asciidoctor-epub3
+git clone https://github.com/aloli-crystal/asciicrystal-epub3.git
+cd asciicrystal-epub3
 shards build --release
-ln -s "$PWD/bin/crystal-asciidoctor-epub3" ~/bin/
+ln -s "$PWD/bin/asciicrystal-epub3" ~/bin/
 ----
 
 == Usage
@@ -109,7 +109,7 @@ Kemal.run
 
 [source,bash]
 ----
-crystal-asciidoctor-epub3 document.adoc
+asciicrystal-epub3 document.adoc
 # => Generates document.epub
 ----
 
@@ -138,7 +138,7 @@ The `--sample` option generates a comprehensive AsciiDoc document and its EPUB, 
 
 [source,bash]
 ----
-crystal-asciidoctor-epub3 --sample
+asciicrystal-epub3 --sample
 # → reference.adoc + reference.adoc.epub
 ----
 
@@ -154,11 +154,11 @@ This document serves as a conformance test for validating EPUB rendering.
 | 2.3.0
 | 2025-08-31
 
-| *Ruby asciidoctor (parser, via crystal-asciidoctor)*
+| *Ruby asciidoctor (parser, via asciicrystal)*
 | 2.0.26
 | 2025-10-24
 
-| *crystal-asciidoctor-epub3*
+| *asciicrystal-epub3*
 | 2.3.0
 | 2026-04-09
 |===
@@ -167,9 +167,9 @@ This document serves as a conformance test for validating EPUB rendering.
 
 [source,bash]
 ----
-git clone https://github.com/aloli-crystal/crystal-asciidoctor.git
-git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
-cd crystal-asciidoctor-epub3
+git clone https://github.com/aloli-crystal/asciicrystal.git
+git clone https://github.com/aloli-crystal/asciicrystal-epub3.git
+cd asciicrystal-epub3
 shards install
 crystal spec
 ----

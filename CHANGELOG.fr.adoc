@@ -3,6 +3,12 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.5 — 2026-07-28
+
+* Renommage du shard `crystal-asciidoctor-epub3` → `asciicrystal-epub3` (abandon du préfixe `crystal-`, `doctor` devient `crystal`).
+* Renommage du module `AsciidoctorEpub` → `AsciicrystalEpub` ; le namespace du cœur `Asciidoctor::` devient `Asciicrystal::` via la dépendance `asciicrystal` (ex-`crystal-asciidoctor`, `~> 2.0.26.12`), et `crystal-rouge` → `rouge` (`~> 4.7.0.3`).
+* Renommage du point d'entrée (`src/asciicrystal-epub3.cr`) et de la CLI (`bin/asciicrystal-epub3`). Les mentions de provenance de la gem Ruby `asciidoctor-epub3` sont conservées.
+
 == v2.3.0.3 — 2026-04-25
 
 Ancres TOC vers les sous-sections. Les entrées de nav.xhtml et

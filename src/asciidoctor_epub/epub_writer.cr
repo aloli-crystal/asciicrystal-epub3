@@ -1,6 +1,6 @@
 require "compress/zip"
 
-module AsciidoctorEpub
+module AsciicrystalEpub
   # Assemble un fichier EPUB (ZIP) a partir d'un EpubBuilder
   class EpubWriter
     @image_files : Hash(String, String)
@@ -64,7 +64,7 @@ module AsciidoctorEpub
     end
 
     DEFAULT_CSS = <<-CSS
-    /* crystal-asciidoctor-epub3 default stylesheet */
+    /* asciicrystal-epub3 default stylesheet */
     body {
       font-family: Georgia, "Times New Roman", serif;
       line-height: 1.6;

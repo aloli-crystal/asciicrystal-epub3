@@ -6,7 +6,7 @@ AsciiDoc to EPUB3 converter for Crystal, equivalent of the https://github.com/as
 
 * Converts AsciiDoc documents to valid EPUB3 files
 * Sections, paragraphs, lists (ordered/unordered/description), tables
-* Code blocks with syntax highlighting (via crystal-rouge), admonitions, blockquotes, verses, sidebars
+* Code blocks with syntax highlighting (via rouge), admonitions, blockquotes, verses, sidebars
 * Images embedded in EPUB ZIP, thematic breaks
 * Cover page from `:front-cover-image:` attribute
 * Footnotes with back-links

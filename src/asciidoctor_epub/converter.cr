@@ -1,19 +1,19 @@
-require "crystal-asciidoctor"
+require "asciicrystal"
 
-module AsciidoctorEpub
+module AsciicrystalEpub
   # Convertit un document AsciiDoc en EPUB3
   class Converter
     @builder : EpubBuilder
     @image_files : Hash(String, String) = {} of String => String # epub_path => local_path
     @base_dir : String = "."
-    @doc : Asciidoctor::Document? = nil
+    @doc : Asciicrystal::Document? = nil
 
     def initialize
       @builder = EpubBuilder.new
     end
 
     # Convertit un document AsciiDoc et retourne les bytes EPUB
-    def convert(doc : Asciidoctor::Document) : Bytes
+    def convert(doc : Asciicrystal::Document) : Bytes
       setup_metadata(doc)
       setup_cover(doc)
       build_chapters(doc)
@@ -21,14 +21,14 @@ module AsciidoctorEpub
     end
 
     # Convertit un document AsciiDoc et ecrit dans un fichier
-    def convert_to_file(doc : Asciidoctor::Document, path : String)
+    def convert_to_file(doc : Asciicrystal::Document, path : String)
       setup_metadata(doc)
       setup_cover(doc)
       build_chapters(doc)
       EpubWriter.new(@builder, @image_files).write(path)
     end
 
-    private def setup_metadata(doc : Asciidoctor::Document)
+    private def setup_metadata(doc : Asciicrystal::Document)
       @base_dir = doc.base_dir
       @builder.title = doc.doctitle.to_s
       @builder.language = doc.attr("lang").try(&.to_s) || "en"
@@ -52,7 +52,7 @@ module AsciidoctorEpub
       @doc = doc
     end
 
-    private def setup_cover(doc : Asciidoctor::Document)
+    private def setup_cover(doc : Asciicrystal::Document)
       cover_attr = doc.attr("front-cover-image")
       return unless cover_attr
 
@@ -74,13 +74,13 @@ module AsciidoctorEpub
       @builder.add_chapter("cover", "Cover", "cover.xhtml", cover_xhtml)
     end
 
-    private def build_chapters(doc : Asciidoctor::Document)
+    private def build_chapters(doc : Asciicrystal::Document)
       # Si le document a des sections de niveau 1, chaque section = un chapitre
-      sections = doc.blocks.select { |b| b.is_a?(Asciidoctor::Section) && b.as(Asciidoctor::Section).level == 1 }
+      sections = doc.blocks.select { |b| b.is_a?(Asciicrystal::Section) && b.as(Asciicrystal::Section).level == 1 }
 
       if sections.size > 0
         # Preamble (contenu avant la premiere section)
-        preamble_blocks = doc.blocks.take_while { |b| !(b.is_a?(Asciidoctor::Section) && b.as(Asciidoctor::Section).level == 1) }
+        preamble_blocks = doc.blocks.take_while { |b| !(b.is_a?(Asciicrystal::Section) && b.as(Asciicrystal::Section).level == 1) }
         if preamble_blocks.size > 0
           preamble_html = preamble_blocks.map { |b| convert_block(b) }.join("\n")
           add_chapter("preamble", doc.doctitle.to_s, "preamble.xhtml", preamble_html)
@@ -88,7 +88,7 @@ module AsciidoctorEpub
 
         # Chapitres
         sections.each_with_index do |section, i|
-          sect = section.as(Asciidoctor::Section)
+          sect = section.as(Asciicrystal::Section)
           chapter_html = convert_section(sect)
 
           # Collect sub-sections for hierarchical TOC
@@ -115,11 +115,11 @@ module AsciidoctorEpub
       end
     end
 
-    private def collect_subsections(section : Asciidoctor::Section) : Array(EpubBuilder::TocEntry)
+    private def collect_subsections(section : Asciicrystal::Section) : Array(EpubBuilder::TocEntry)
       entries = [] of EpubBuilder::TocEntry
       section.blocks.each do |block|
-        if block.is_a?(Asciidoctor::Section)
-          sub = block.as(Asciidoctor::Section)
+        if block.is_a?(Asciicrystal::Section)
+          sub = block.as(Asciicrystal::Section)
           children = collect_subsections(sub)
           entries << EpubBuilder::TocEntry.new(
             title: sub.title.to_s,
@@ -135,7 +135,7 @@ module AsciidoctorEpub
     # Prefers the explicit AsciiDoc id (`[[my-anchor]]` or auto-generated
     # by the parser, e.g. `_overview`) so the same id surfaces both in
     # the rendered XHTML and in the nav.xhtml / toc.ncx entries.
-    private def section_anchor_id(section : Asciidoctor::Section) : String
+    private def section_anchor_id(section : Asciicrystal::Section) : String
       if (id = section.id) && !id.empty?
         id
       else
@@ -151,7 +151,7 @@ module AsciidoctorEpub
       @builder.add_chapter(id, title, filename, xhtml, children)
     end
 
-    private def render_footnotes(footnotes : Array(Asciidoctor::Document::Footnote)) : String
+    private def render_footnotes(footnotes : Array(Asciicrystal::Document::Footnote)) : String
       String.build do |io|
         io << %(\n  <hr class="footnotes-separator"/>\n)
         io << %(  <div class="footnotes">\n)
@@ -167,7 +167,7 @@ module AsciidoctorEpub
       end
     end
 
-    private def convert_section(section : Asciidoctor::Section) : String
+    private def convert_section(section : Asciicrystal::Section) : String
       String.build do |io|
         level = section.level
         anchor_id = section_anchor_id(section)
@@ -188,22 +188,22 @@ module AsciidoctorEpub
       end
     end
 
-    private def convert_block(block : Asciidoctor::AbstractBlock) : String
+    private def convert_block(block : Asciicrystal::AbstractBlock) : String
       case block
-      when Asciidoctor::Section
+      when Asciicrystal::Section
         convert_section(block)
-      when Asciidoctor::Block
+      when Asciicrystal::Block
         convert_content_block(block)
-      when Asciidoctor::List
+      when Asciicrystal::List
         convert_list(block)
-      when Asciidoctor::Table
+      when Asciicrystal::Table
         convert_table(block)
       else
         ""
       end
     end
 
-    private def convert_content_block(block : Asciidoctor::Block) : String
+    private def convert_content_block(block : Asciicrystal::Block) : String
       case block.context
       when :paragraph
         content = apply_inline_subs(block)
@@ -260,7 +260,7 @@ module AsciidoctorEpub
       end || ""
     end
 
-    private def embed_image(target : String, block : Asciidoctor::AbstractBlock)
+    private def embed_image(target : String, block : Asciicrystal::AbstractBlock)
       imagesdir = block.document.attr("imagesdir").try(&.to_s) || ""
       local_path = resolve_image_path(target, imagesdir)
 
@@ -293,7 +293,7 @@ module AsciidoctorEpub
       end
     end
 
-    private def convert_list(list : Asciidoctor::List) : String
+    private def convert_list(list : Asciicrystal::List) : String
       case list.context
       when :dlist
         convert_dlist(list)
@@ -302,7 +302,7 @@ module AsciidoctorEpub
         String.build do |io|
           io << %(  <#{tag}>\n)
           list.items.each do |item|
-            if item.is_a?(Asciidoctor::ListItem)
+            if item.is_a?(Asciicrystal::ListItem)
               text = apply_inline_subs_from_text(item.text.to_s)
               io << %(    <li>#{text})
               if item.blocks.size > 0
@@ -318,21 +318,21 @@ module AsciidoctorEpub
       end
     end
 
-    private def convert_dlist(list : Asciidoctor::List) : String
+    private def convert_dlist(list : Asciicrystal::List) : String
       String.build do |io|
         io << %(  <dl>\n)
         items = list.items
         i = 0
         while i < items.size
           item = items[i]
-          if item.is_a?(Asciidoctor::ListItem)
+          if item.is_a?(Asciicrystal::ListItem)
             marker = item.marker
             if marker != "desc"
               # Term (dt)
               io << %(    <dt>#{item.text || ""}</dt>\n)
               # Check if next item is a description (dd)
-              if i + 1 < items.size && items[i + 1].is_a?(Asciidoctor::ListItem) && items[i + 1].as(Asciidoctor::ListItem).marker == "desc"
-                desc_item = items[i + 1].as(Asciidoctor::ListItem)
+              if i + 1 < items.size && items[i + 1].is_a?(Asciicrystal::ListItem) && items[i + 1].as(Asciicrystal::ListItem).marker == "desc"
+                desc_item = items[i + 1].as(Asciicrystal::ListItem)
                 io << %(    <dd>)
                 desc_text = desc_item.text || ""
                 if desc_item.blocks.size > 0
@@ -353,7 +353,7 @@ module AsciidoctorEpub
       end
     end
 
-    private def convert_table(table : Asciidoctor::Table) : String
+    private def convert_table(table : Asciicrystal::Table) : String
       String.build do |io|
         io << %(  <table>\n)
 
@@ -387,7 +387,7 @@ module AsciidoctorEpub
       end
     end
 
-    private def apply_inline_subs(block : Asciidoctor::Block) : String
+    private def apply_inline_subs(block : Asciicrystal::Block) : String
       # Utilise le contenu avec substitutions appliquees
       if (content = block.content)
         content.to_s

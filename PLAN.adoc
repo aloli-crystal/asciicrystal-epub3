@@ -1,4 +1,4 @@
-= crystal-asciidoctor-epub3 -- Plan de developpement
+= asciicrystal-epub3 -- Plan de developpement
 Philippe Nenert -- ALOLI sas a Laguiole
 :revdate: 2026-04-09
 :toc: left
@@ -46,7 +46,7 @@ Philippe Nenert -- ALOLI sas a Laguiole
 
 | Blocs de code
 | ✓ Complet
-| Coloration syntaxique via crystal-rouge
+| Coloration syntaxique via rouge
 
 | Admonitions
 | ✓ Complet
@@ -98,7 +98,7 @@ Philippe Nenert -- ALOLI sas a Laguiole
 
 | CLI
 | ✓ Complet
-| `crystal-asciidoctor-epub3 document.adoc`
+| `asciicrystal-epub3 document.adoc`
 
 | API programmatique
 | ✓ Complet
@@ -139,7 +139,7 @@ AsciidoctorEpub::Converter
 | Aucune
 
 | Index
-| Generer un index alphabetique comme dans crystal-asciidoctor-pdf
+| Generer un index alphabetique comme dans asciicrystal-pdf
 | Aucune
 |===
 
@@ -150,7 +150,7 @@ AsciidoctorEpub::Converter
 | Fonctionnalite | Description | Dependance
 
 | Themes YAML
-| Permettre de personnaliser le CSS via un fichier YAML (comme crystal-asciidoctor-pdf)
+| Permettre de personnaliser le CSS via un fichier YAML (comme asciicrystal-pdf)
 | Aucune
 
 | Validation EPUBCheck
@@ -184,7 +184,7 @@ AsciidoctorEpub::Converter
 == 4. Dependances de l'ecosysteme
 
 ....
-crystal-asciidoctor-epub3
-  ├── crystal-asciidoctor   (parser AsciiDoc -> AST)
-  └── crystal-rouge         (coloration syntaxique)
+asciicrystal-epub3
+  ├── asciicrystal   (parser AsciiDoc -> AST)
+  └── rouge         (coloration syntaxique)
 ....

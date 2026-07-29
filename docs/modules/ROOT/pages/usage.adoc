@@ -58,7 +58,7 @@ Kemal.run
 
 [source,bash]
 ----
-crystal-asciidoctor-epub3 document.adoc
+asciicrystal-epub3 document.adoc
 # => Generates document.epub
 ----
 

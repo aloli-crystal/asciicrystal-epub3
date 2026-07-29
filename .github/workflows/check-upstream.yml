@@ -45,7 +45,7 @@ jobs:
                 owner: context.repo.owner,
                 repo: context.repo.repo,
                 title: title,
-                body: `The upstream Ruby gem asciidoctor-epub3 has been updated from **${current}** to **${latest}**.\n\nPlease review the changes at https://github.com/asciidoctor/asciidoctor-epub3/releases and update crystal-asciidoctor-epub3 accordingly.`,
+                body: `The upstream Ruby gem asciidoctor-epub3 has been updated from **${current}** to **${latest}**.\n\nPlease review the changes at https://github.com/asciidoctor/asciidoctor-epub3/releases and update asciicrystal-epub3 accordingly.`,
                 labels: ['upstream']
               });
             }

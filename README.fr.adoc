@@ -1,4 +1,4 @@
-= crystal-asciidoctor-epub3
+= asciicrystal-epub3
 :toc: left
 :toclevels: 2
 
@@ -10,7 +10,7 @@ link:README.adoc[English version]
 
 * Conversion de documents AsciiDoc en fichiers EPUB3 valides
 * Sections, paragraphes, listes (ordonnées/non ordonnées/description), tableaux
-* Blocs de code avec coloration syntaxique (via crystal-rouge), admonitions, citations, vers, sidebars
+* Blocs de code avec coloration syntaxique (via rouge), admonitions, citations, vers, sidebars
 * Images embarquées dans le ZIP EPUB, sauts thématiques
 * Page de couverture depuis l'attribut `:front-cover-image:`
 * Notes de bas de page avec liens retour
@@ -31,8 +31,8 @@ Ajouter dans votre `shard.yml` :
 [source,yaml]
 ----
 dependencies:
-  crystal-asciidoctor-epub3:
-    github: aloli-crystal/crystal-asciidoctor-epub3
+  asciicrystal-epub3:
+    github: aloli-crystal/asciicrystal-epub3
     version: "~> 2.3"
 ----
 
@@ -42,10 +42,10 @@ Puis exécuter `shards install`.
 
 [source,bash]
 ----
-git clone https://github.com/aloli-crystal/crystal-asciidoctor-epub3.git
-cd crystal-asciidoctor-epub3
+git clone https://github.com/aloli-crystal/asciicrystal-epub3.git
+cd asciicrystal-epub3
 shards build --release
-ln -s "$PWD/bin/crystal-asciidoctor-epub3" ~/bin/
+ln -s "$PWD/bin/asciicrystal-epub3" ~/bin/
 ----
 
 == Utilisation
@@ -108,7 +108,7 @@ Kemal.run
 
 [source,bash]
 ----
-crystal-asciidoctor-epub3 document.adoc
+asciicrystal-epub3 document.adoc
 # => Génère document.epub
 ----
 
@@ -137,7 +137,7 @@ L'option `--sample` génère un document AsciiDoc exhaustif et son EPUB, couvran
 
 [source,bash]
 ----
-crystal-asciidoctor-epub3 --sample
+asciicrystal-epub3 --sample
 # → reference.adoc + reference.adoc.epub
 ----
 

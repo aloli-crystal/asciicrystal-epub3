@@ -1,15 +1,15 @@
 require "./spec_helper"
 
-describe AsciidoctorEpub::EpubBuilder do
+describe AsciicrystalEpub::EpubBuilder do
   it "generates valid container.xml" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     xml = builder.container_xml
     xml.should contain("application/oebps-package+xml")
     xml.should contain("OEBPS/content.opf")
   end
 
   it "generates content.opf with metadata" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test Book"
     builder.authors = ["John Doe"]
     builder.language = "fr"
@@ -25,7 +25,7 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 
   it "generates toc.ncx with navigation points" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test Book"
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "")
     builder.add_chapter("ch2", "Chapter 2", "chapter-2.xhtml", "")
@@ -39,7 +39,7 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 
   it "generates nav.xhtml with links" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test Book"
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "")
 
@@ -49,13 +49,13 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 
   it "generates unique identifier" do
-    b1 = AsciidoctorEpub::EpubBuilder.new
-    b2 = AsciidoctorEpub::EpubBuilder.new
+    b1 = AsciicrystalEpub::EpubBuilder.new
+    b2 = AsciicrystalEpub::EpubBuilder.new
     b1.identifier.should_not eq(b2.identifier)
   end
 
   it "includes cover image in manifest" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.cover_image = "images/cover.jpg"
     opf = builder.content_opf
     opf.should contain("cover-image")
@@ -64,13 +64,13 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 
   it "generates hierarchical nav.xhtml with nested sections" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test Book"
 
     children = [
-      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", "sec-1-1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
-      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2", "sec-1-2", [
-        AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.2.1", "sec-1-2-1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      AsciicrystalEpub::EpubBuilder::TocEntry.new("Section 1.1", "sec-1-1", [] of AsciicrystalEpub::EpubBuilder::TocEntry),
+      AsciicrystalEpub::EpubBuilder::TocEntry.new("Section 1.2", "sec-1-2", [
+        AsciicrystalEpub::EpubBuilder::TocEntry.new("Section 1.2.1", "sec-1-2-1", [] of AsciicrystalEpub::EpubBuilder::TocEntry),
       ]),
     ]
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "", children)
@@ -88,11 +88,11 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 
   it "generates hierarchical toc.ncx with nested navPoints" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test Book"
 
     children = [
-      AsciidoctorEpub::EpubBuilder::TocEntry.new("Section 1.1", "sec-1-1", [] of AsciidoctorEpub::EpubBuilder::TocEntry),
+      AsciicrystalEpub::EpubBuilder::TocEntry.new("Section 1.1", "sec-1-1", [] of AsciicrystalEpub::EpubBuilder::TocEntry),
     ]
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml", "", children)
 
@@ -107,7 +107,7 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 
   it "includes resources in manifest" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.add_resource("img-photo", "images/photo.png", "image/png")
     opf = builder.content_opf
     opf.should contain("id=\"img-photo\"")
@@ -116,9 +116,9 @@ describe AsciidoctorEpub::EpubBuilder do
   end
 end
 
-describe AsciidoctorEpub::XhtmlBuilder do
+describe AsciicrystalEpub::XhtmlBuilder do
   it "wraps content in valid XHTML5" do
-    xhtml = AsciidoctorEpub::XhtmlBuilder.wrap("Test", "<p>Hello</p>")
+    xhtml = AsciicrystalEpub::XhtmlBuilder.wrap("Test", "<p>Hello</p>")
     xhtml.should contain("<?xml version=\"1.0\"")
     xhtml.should contain("<!DOCTYPE html>")
     xhtml.should contain("xmlns=\"http://www.w3.org/1999/xhtml\"")
@@ -127,13 +127,13 @@ describe AsciidoctorEpub::XhtmlBuilder do
   end
 
   it "generates a cover page" do
-    xhtml = AsciidoctorEpub::XhtmlBuilder.cover_page("My Book", "images/cover.jpg")
+    xhtml = AsciicrystalEpub::XhtmlBuilder.cover_page("My Book", "images/cover.jpg")
     xhtml.should contain("epub:type=\"cover\"")
     xhtml.should contain("images/cover.jpg")
   end
 
   it "generates a title page" do
-    xhtml = AsciidoctorEpub::XhtmlBuilder.title_page("My Book", ["Author One", "Author Two"])
+    xhtml = AsciicrystalEpub::XhtmlBuilder.title_page("My Book", ["Author One", "Author Two"])
     xhtml.should contain("epub:type=\"titlepage\"")
     xhtml.should contain("<h1>My Book</h1>")
     xhtml.should contain("Author One")
@@ -141,14 +141,14 @@ describe AsciidoctorEpub::XhtmlBuilder do
   end
 end
 
-describe AsciidoctorEpub::EpubWriter do
+describe AsciicrystalEpub::EpubWriter do
   it "writes a valid EPUB to IO" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test"
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml",
-      AsciidoctorEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
+      AsciicrystalEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
 
-    bytes = AsciidoctorEpub::EpubWriter.new(builder).to_bytes
+    bytes = AsciicrystalEpub::EpubWriter.new(builder).to_bytes
     bytes.size.should be > 0
 
     # Verify it's a valid ZIP (starts with PK)
@@ -157,14 +157,14 @@ describe AsciidoctorEpub::EpubWriter do
   end
 
   it "writes EPUB to file" do
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test"
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml",
-      AsciidoctorEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
+      AsciicrystalEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
 
     Dir.mkdir_p("spec/output")
     path = "spec/output/test.epub"
-    AsciidoctorEpub::EpubWriter.new(builder).write(path)
+    AsciicrystalEpub::EpubWriter.new(builder).write(path)
 
     File.exists?(path).should be_true
     File.size(path).should be > 0
@@ -178,13 +178,13 @@ describe AsciidoctorEpub::EpubWriter do
     test_image_path = "spec/output/test_image.png"
     File.write(test_image_path, "FAKE_PNG_DATA")
 
-    builder = AsciidoctorEpub::EpubBuilder.new
+    builder = AsciicrystalEpub::EpubBuilder.new
     builder.title = "Test"
     builder.add_chapter("ch1", "Chapter 1", "chapter-1.xhtml",
-      AsciidoctorEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
+      AsciicrystalEpub::XhtmlBuilder.wrap("Chapter 1", "<p>Content</p>"))
 
     image_files = {"images/test_image.png" => test_image_path}
-    bytes = AsciidoctorEpub::EpubWriter.new(builder, image_files).to_bytes
+    bytes = AsciicrystalEpub::EpubWriter.new(builder, image_files).to_bytes
 
     # Verify the image is in the ZIP
     found_image = false
@@ -203,7 +203,7 @@ describe AsciidoctorEpub::EpubWriter do
   end
 end
 
-describe AsciidoctorEpub::Converter do
+describe AsciicrystalEpub::Converter do
   it "converts a simple AsciiDoc document to EPUB bytes" do
     input = <<-ADOC
     = My Book
@@ -218,8 +218,8 @@ describe AsciidoctorEpub::Converter do
     This is the second chapter with *bold* and _italic_.
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     bytes.size.should be > 0
     bytes[0].should eq(0x50) # P
@@ -237,8 +237,8 @@ describe AsciidoctorEpub::Converter do
     * Item 3
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
     bytes.size.should be > 0
   end
 
@@ -254,8 +254,8 @@ describe AsciidoctorEpub::Converter do
     ----
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
     bytes.size.should be > 0
   end
 
@@ -273,8 +273,8 @@ describe AsciidoctorEpub::Converter do
     ----
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     # Extract chapter XHTML from the EPUB ZIP
     chapter_xhtml = ""
@@ -297,8 +297,8 @@ describe AsciidoctorEpub::Converter do
 
   it "converts a document without sections" do
     input = "Just a simple paragraph."
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
     bytes.size.should be > 0
   end
 
@@ -319,8 +319,8 @@ describe AsciidoctorEpub::Converter do
 
     Dir.mkdir_p("spec/output")
     path = "spec/output/test_converter.epub"
-    doc = Asciidoctor.load(input)
-    AsciidoctorEpub::Converter.new.convert_to_file(doc, path)
+    doc = Asciicrystal.load(input)
+    AsciicrystalEpub::Converter.new.convert_to_file(doc, path)
 
     File.exists?(path).should be_true
     File.size(path).should be > 0
@@ -340,8 +340,8 @@ describe AsciidoctorEpub::Converter do
     Contenu.
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
     bytes.size.should be > 0
   end
 
@@ -356,8 +356,8 @@ describe AsciidoctorEpub::Converter do
     SSD:: Solid State Drive
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     # Extract chapter XHTML from the EPUB ZIP
     chapter_xhtml = ""
@@ -386,8 +386,8 @@ describe AsciidoctorEpub::Converter do
     image::photo.png[A photo]
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     # Extract chapter XHTML from the EPUB ZIP
     chapter_xhtml = ""
@@ -432,8 +432,8 @@ describe AsciidoctorEpub::Converter do
     More content.
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     nav_xhtml = ""
     ncx_content = ""
@@ -474,8 +474,8 @@ describe AsciidoctorEpub::Converter do
     Content.
     ADOC
 
-    doc = Asciidoctor.load(input, {"base_dir" => "spec/output"})
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input, {"base_dir" => "spec/output"})
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     cover_xhtml = ""
     opf_content = ""
@@ -513,8 +513,8 @@ describe AsciidoctorEpub::Converter do
     This has a footnote.footnote:[This is the footnote text.]
     ADOC
 
-    doc = Asciidoctor.load(input)
-    bytes = AsciidoctorEpub::Converter.new.convert(doc)
+    doc = Asciicrystal.load(input)
+    bytes = AsciicrystalEpub::Converter.new.convert(doc)
 
     chapter_xhtml = ""
     io = IO::Memory.new(bytes)

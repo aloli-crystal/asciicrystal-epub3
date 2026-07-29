@@ -21,8 +21,8 @@ module IntegrationHelper
     epub_path = stem + ".epub"
     File.write(adoc_path, adoc_source)
 
-    doc = Asciidoctor.load_file(adoc_path)
-    converter = AsciidoctorEpub::Converter.new
+    doc = Asciicrystal.load_file(adoc_path)
+    converter = AsciicrystalEpub::Converter.new
     converter.convert_to_file(doc, epub_path)
 
     File.delete(adoc_path) if File.exists?(adoc_path)

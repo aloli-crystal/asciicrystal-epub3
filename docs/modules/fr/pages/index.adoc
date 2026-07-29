@@ -6,7 +6,7 @@ Convertisseur AsciiDoc vers EPUB3 pour Crystal, equivalent de la gem Ruby https:
 
 * Conversion de documents AsciiDoc en fichiers EPUB3 valides
 * Sections, paragraphes, listes, tableaux
-* Blocs de code avec coloration syntaxique (via crystal-rouge), admonitions, citations, vers, sidebars
+* Blocs de code avec coloration syntaxique (via rouge), admonitions, citations, vers, sidebars
 * Images embarquees dans le ZIP EPUB
 * Page de couverture depuis l'attribut `:front-cover-image:`
 * Notes de bas de page avec liens retour

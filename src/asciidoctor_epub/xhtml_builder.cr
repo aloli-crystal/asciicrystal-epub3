@@ -1,4 +1,4 @@
-module AsciidoctorEpub
+module AsciicrystalEpub
   # Génère des fichiers XHTML5 valides pour les chapitres EPUB
   class XhtmlBuilder
     def self.wrap(title : String, body : String, language : String = "en", stylesheet : String = "../styles/epub3.css") : String
