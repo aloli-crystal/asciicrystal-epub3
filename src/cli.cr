@@ -1,5 +1,5 @@
 #!/usr/bin/env crystal
-require "../src/asciidoctor_epub"
+require "./asciidoctor_epub"
 require "option_parser"
 
 input_file = ""

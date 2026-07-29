@@ -3,6 +3,10 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.6 — 2026-07-29
+
+* Move the CLI source from `bin/asciicrystal-epub3` to `src/cli.cr` so `shards build` no longer overwrites the source with the compiled binary; `main` now points to `src/cli.cr`.
+
 == v2.3.0.5 — 2026-07-28
 
 * Rename the shard `crystal-asciidoctor-epub3` → `asciicrystal-epub3` (drop the `crystal-` prefix, turn `doctor` into `crystal`).
