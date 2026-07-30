@@ -1,1 +1,1 @@
-require "./asciidoctor_epub"
+require "./asciicrystal_epub"

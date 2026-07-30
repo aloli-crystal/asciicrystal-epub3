@@ -1,6 +1,6 @@
 require "spec"
 require "compress/zip"
-require "../../src/asciidoctor_epub"
+require "../../src/asciicrystal_epub"
 
 # Integration-test helpers: run the real converter end-to-end on a
 # snippet of AsciiDoc, write an EPUB to a temp path, then read it back

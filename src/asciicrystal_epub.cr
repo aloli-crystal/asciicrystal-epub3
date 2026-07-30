@@ -1,8 +1,8 @@
 require "rouge"
-require "./asciidoctor_epub/epub_builder"
-require "./asciidoctor_epub/xhtml_builder"
-require "./asciidoctor_epub/epub_writer"
-require "./asciidoctor_epub/converter"
+require "./asciicrystal_epub/epub_builder"
+require "./asciicrystal_epub/xhtml_builder"
+require "./asciicrystal_epub/epub_writer"
+require "./asciicrystal_epub/converter"
 
 module AsciicrystalEpub
   # Lue au compile-time depuis `shard.yml` via le macro `read_file`.

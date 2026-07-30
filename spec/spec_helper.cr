@@ -1,3 +1,3 @@
 require "spec"
 require "compress/zip"
-require "../src/asciidoctor_epub"
+require "../src/asciicrystal_epub"

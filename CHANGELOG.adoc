@@ -3,6 +3,10 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.7 — 2026-07-29
+
+* Rename the internal source dir `src/asciidoctor_epub/` → `src/asciicrystal_epub/` (internal path; no API change). Ruby-gem provenance preserved.
+
 == v2.3.0.6 — 2026-07-29
 
 * Move the CLI source from `bin/asciicrystal-epub3` to `src/cli.cr` so `shards build` no longer overwrites the source with the compiled binary; `main` now points to `src/cli.cr`.
