@@ -8,20 +8,20 @@ require "./spec_helper"
 describe "Integration · TOC anchors" do
   it "emits matching id attributes on chapter sub-sections in the XHTML" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Chapter One
+      == Chapter One
 
-    Body of the chapter.
+      Body of the chapter.
 
-    === Subsection A
+      === Subsection A
 
-    Body of subsection A.
+      Body of subsection A.
 
-    === Subsection B
+      === Subsection B
 
-    Body of subsection B.
-    ADOC
+      Body of subsection B.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       text = IntegrationHelper.chapters_text(path)
@@ -40,16 +40,16 @@ describe "Integration · TOC anchors" do
 
   it "links sub-section TOC entries to the chapter file with a fragment" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Chapter One
+      == Chapter One
 
-    Body.
+      Body.
 
-    === Inner Section
+      === Inner Section
 
-    More body.
-    ADOC
+      More body.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       nav = IntegrationHelper.read_entry(path, "OEBPS/nav.xhtml").not_nil!
@@ -64,20 +64,20 @@ describe "Integration · TOC anchors" do
 
   it "writes the same fragment-aware hrefs into toc.ncx" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Chapter One
+      == Chapter One
 
-    Body.
+      Body.
 
-    === Alpha
+      === Alpha
 
-    a
+      a
 
-    === Beta
+      === Beta
 
-    b
-    ADOC
+      b
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       ncx = IntegrationHelper.read_entry(path, "OEBPS/toc.ncx").not_nil!
@@ -91,17 +91,17 @@ describe "Integration · TOC anchors" do
 
   it "honours an explicit AsciiDoc id on a sub-section" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Chapter One
+      == Chapter One
 
-    Body.
+      Body.
 
-    [[overview]]
-    === Overview Section
+      [[overview]]
+      === Overview Section
 
-    Hello.
-    ADOC
+      Hello.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       nav = IntegrationHelper.read_entry(path, "OEBPS/nav.xhtml").not_nil!
@@ -117,20 +117,20 @@ describe "Integration · TOC anchors" do
 
   it "supports nested sub-section TOC anchors recursively" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Chapter One
+      == Chapter One
 
-    Body.
+      Body.
 
-    === Level 2
+      === Level 2
 
-    L2 body.
+      L2 body.
 
-    ==== Level 3
+      ==== Level 3
 
-    L3 body.
-    ADOC
+      L3 body.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       nav = IntegrationHelper.read_entry(path, "OEBPS/nav.xhtml").not_nil!

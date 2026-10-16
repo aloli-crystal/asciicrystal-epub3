@@ -7,12 +7,12 @@ require "./spec_helper"
 describe "Integration · EPUB metadata" do
   it "puts the document title in <dc:title>" do
     source = <<-ADOC
-    = Le Guide du Voyageur
-    :author: Douglas Adams
-    :lang: fr
+      = Le Guide du Voyageur
+      :author: Douglas Adams
+      :lang: fr
 
-    Don't panic.
-    ADOC
+      Don't panic.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       opf = IntegrationHelper.read_entry(path, "OEBPS/content.opf").not_nil!
@@ -26,16 +26,16 @@ describe "Integration · EPUB metadata" do
 
   it "advertises the chapters in the OPF spine" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Chapter One
+      == Chapter One
 
-    Para 1.
+      Para 1.
 
-    == Chapter Two
+      == Chapter Two
 
-    Para 2.
-    ADOC
+      Para 2.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       opf = IntegrationHelper.read_entry(path, "OEBPS/content.opf").not_nil!
@@ -51,16 +51,16 @@ describe "Integration · EPUB metadata" do
 
   it "lists chapters in nav.xhtml for EPUB3 navigation" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == First
+      == First
 
-    Hello.
+      Hello.
 
-    == Second
+      == Second
 
-    Bye.
-    ADOC
+      Bye.
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       nav = IntegrationHelper.read_entry(path, "OEBPS/nav.xhtml").not_nil!
@@ -74,16 +74,16 @@ describe "Integration · EPUB metadata" do
 
   it "lists chapters in toc.ncx for EPUB2 fallback" do
     source = <<-ADOC
-    = Book
+      = Book
 
-    == Alpha
+      == Alpha
 
-    a
+      a
 
-    == Beta
+      == Beta
 
-    b
-    ADOC
+      b
+      ADOC
     path = IntegrationHelper.convert(source)
     begin
       ncx = IntegrationHelper.read_entry(path, "OEBPS/toc.ncx").not_nil!

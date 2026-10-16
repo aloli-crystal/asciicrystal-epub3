@@ -14,12 +14,12 @@ describe "Integration · rendered content" do
   it "emits <h1>…<h6> for sections" do
     text = IntegrationHelper.chapters_text(
       IntegrationHelper.convert(<<-ADOC)
-      = Book
+        = Book
 
-      == Heading One
+        == Heading One
 
-      Body.
-      ADOC
+        Body.
+        ADOC
     )
     # The heading carries an `id="…-h"` attribute (anchor target for
     # the in-doc TOC navigation), so we match on the open tag prefix
@@ -30,14 +30,14 @@ describe "Integration · rendered content" do
   it "emits <ul>/<li> for unordered lists" do
     text = IntegrationHelper.chapters_text(
       IntegrationHelper.convert(<<-ADOC)
-      = Book
+        = Book
 
-      == Chapter
+        == Chapter
 
-      * alpha
-      * beta
-      * gamma
-      ADOC
+        * alpha
+        * beta
+        * gamma
+        ADOC
     )
     text.should contain("<ul>")
     text.should contain("<li>alpha")
@@ -48,13 +48,13 @@ describe "Integration · rendered content" do
   it "emits <ol>/<li> for ordered lists" do
     text = IntegrationHelper.chapters_text(
       IntegrationHelper.convert(<<-ADOC)
-      = Book
+        = Book
 
-      == Chapter
+        == Chapter
 
-      . one
-      . two
-      ADOC
+        . one
+        . two
+        ADOC
     )
     text.should contain("<ol>")
     text.should contain("<li>one")
@@ -64,17 +64,17 @@ describe "Integration · rendered content" do
   it "emits <table><thead>/<tbody> for tables" do
     text = IntegrationHelper.chapters_text(
       IntegrationHelper.convert(<<-ADOC)
-      = Book
+        = Book
 
-      == Chapter
+        == Chapter
 
-      |===
-      | Col A | Col B
+        |===
+        | Col A | Col B
 
-      | row1a | row1b
-      | row2a | row2b
-      |===
-      ADOC
+        | row1a | row1b
+        | row2a | row2b
+        |===
+        ADOC
     )
     text.should contain("<table>")
     # Our converter uses the first row as header when no header option is
@@ -87,12 +87,12 @@ describe "Integration · rendered content" do
   it "wraps admonitions in <div class=\"admonitionblock …\">" do
     text = IntegrationHelper.chapters_text(
       IntegrationHelper.convert(<<-ADOC)
-      = Book
+        = Book
 
-      == Chapter
+        == Chapter
 
-      NOTE: Take care.
-      ADOC
+        NOTE: Take care.
+        ADOC
     )
     text.should contain("admonitionblock")
     text.should contain("NOTE")
@@ -102,15 +102,15 @@ describe "Integration · rendered content" do
   it "renders source blocks as <pre><code>" do
     text = IntegrationHelper.chapters_text(
       IntegrationHelper.convert(<<-ADOC)
-      = Book
+        = Book
 
-      == Chapter
+        == Chapter
 
-      [source,crystal]
-      ----
-      puts "hi"
-      ----
-      ADOC
+        [source,crystal]
+        ----
+        puts "hi"
+        ----
+        ADOC
     )
     text.should contain("<pre")
     text.should contain("<code")

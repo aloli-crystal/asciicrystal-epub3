@@ -3,6 +3,10 @@
 :toc-title: Versions
 :toclevels: 2
 
+== v2.3.0.8 — 2026-10-16
+
+* ameba 1.7 and Crystal 1.22.0 in CI; new rules applied, no behaviour change.
+
 == v2.3.0.7 — 2026-07-29
 
 * Rename the internal source dir `src/asciidoctor_epub/` → `src/asciicrystal_epub/` (internal path; no API change). Ruby-gem provenance preserved.

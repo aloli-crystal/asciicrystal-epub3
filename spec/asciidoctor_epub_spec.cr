@@ -206,17 +206,17 @@ end
 describe AsciicrystalEpub::Converter do
   it "converts a simple AsciiDoc document to EPUB bytes" do
     input = <<-ADOC
-    = My Book
-    Author Name
+      = My Book
+      Author Name
 
-    == Chapter 1
+      == Chapter 1
 
-    This is the first chapter.
+      This is the first chapter.
 
-    == Chapter 2
+      == Chapter 2
 
-    This is the second chapter with *bold* and _italic_.
-    ADOC
+      This is the second chapter with *bold* and _italic_.
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -228,14 +228,14 @@ describe AsciicrystalEpub::Converter do
 
   it "converts a document with lists" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Lists
+      == Lists
 
-    * Item 1
-    * Item 2
-    * Item 3
-    ADOC
+      * Item 1
+      * Item 2
+      * Item 3
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -244,15 +244,15 @@ describe AsciicrystalEpub::Converter do
 
   it "converts a document with code blocks" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Code
+      == Code
 
-    [source,crystal]
-    ----
-    puts "Hello, World!"
-    ----
-    ADOC
+      [source,crystal]
+      ----
+      puts "Hello, World!"
+      ----
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -261,17 +261,17 @@ describe AsciicrystalEpub::Converter do
 
   it "produces syntax-highlighted output for source code blocks" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Code
+      == Code
 
-    [source,crystal]
-    ----
-    def hello
-      puts "Hello, World!"
-    end
-    ----
-    ADOC
+      [source,crystal]
+      ----
+      def hello
+        puts "Hello, World!"
+      end
+      ----
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -304,18 +304,18 @@ describe AsciicrystalEpub::Converter do
 
   it "writes EPUB to file" do
     input = <<-ADOC
-    = Test Book
-    Test Author
-    :lang: fr
+      = Test Book
+      Test Author
+      :lang: fr
 
-    == Introduction
+      == Introduction
 
-    Un paragraphe en francais.
+      Un paragraphe en francais.
 
-    == Chapitre 2
+      == Chapitre 2
 
-    Un autre chapitre.
-    ADOC
+      Un autre chapitre.
+      ADOC
 
     Dir.mkdir_p("spec/output")
     path = "spec/output/test_converter.epub"
@@ -330,15 +330,15 @@ describe AsciicrystalEpub::Converter do
 
   it "extracts metadata from document" do
     input = <<-ADOC
-    = Mon Livre
-    Jean Dupont
-    :lang: fr
-    :description: Un livre de test
+      = Mon Livre
+      Jean Dupont
+      :lang: fr
+      :description: Un livre de test
 
-    == Chapitre 1
+      == Chapitre 1
 
-    Contenu.
-    ADOC
+      Contenu.
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -347,14 +347,14 @@ describe AsciicrystalEpub::Converter do
 
   it "converts a document with description lists" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Glossary
+      == Glossary
 
-    CPU:: Central Processing Unit
-    RAM:: Random Access Memory
-    SSD:: Solid State Drive
-    ADOC
+      CPU:: Central Processing Unit
+      RAM:: Random Access Memory
+      SSD:: Solid State Drive
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -379,12 +379,12 @@ describe AsciicrystalEpub::Converter do
 
   it "converts a document with images and tracks them as resources" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Chapter with Image
+      == Chapter with Image
 
-    image::photo.png[A photo]
-    ADOC
+      image::photo.png[A photo]
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -413,24 +413,24 @@ describe AsciicrystalEpub::Converter do
 
   it "generates hierarchical TOC for nested sections" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Chapter 1
+      == Chapter 1
 
-    Intro.
+      Intro.
 
-    === Section 1.1
+      === Section 1.1
 
-    Content of section 1.1.
+      Content of section 1.1.
 
-    === Section 1.2
+      === Section 1.2
 
-    Content of section 1.2.
+      Content of section 1.2.
 
-    == Chapter 2
+      == Chapter 2
 
-    More content.
-    ADOC
+      More content.
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -465,14 +465,14 @@ describe AsciicrystalEpub::Converter do
     File.write("spec/output/cover.jpg", "FAKE_JPEG")
 
     input = <<-ADOC
-    = My Book
-    Author Name
-    :front-cover-image: image:cover.jpg[]
+      = My Book
+      Author Name
+      :front-cover-image: image:cover.jpg[]
 
-    == Chapter 1
+      == Chapter 1
 
-    Content.
-    ADOC
+      Content.
+      ADOC
 
     doc = Asciicrystal.load(input, {"base_dir" => "spec/output"})
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
@@ -506,12 +506,12 @@ describe AsciicrystalEpub::Converter do
 
   it "converts a document with footnotes" do
     input = <<-ADOC
-    = My Book
+      = My Book
 
-    == Chapter 1
+      == Chapter 1
 
-    This has a footnote.footnote:[This is the footnote text.]
-    ADOC
+      This has a footnote.footnote:[This is the footnote text.]
+      ADOC
 
     doc = Asciicrystal.load(input)
     bytes = AsciicrystalEpub::Converter.new.convert(doc)
